@@ -2,7 +2,9 @@
 
 <h1 class="text-2xl font-bold mb-6">Loan Repayments</h1>
 
-<%= link_to "New Repayment", new_loan_repayment_path, class: "btn btn-primary mb-4" %>
+<% if current_user.admin? %>
+  <%= link_to "New Repayment", new_loan_repayment_path, class: "btn btn-primary mb-4" %>
+<% end %>
 
 <table class="table">
   <thead>

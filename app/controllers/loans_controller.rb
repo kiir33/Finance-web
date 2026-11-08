@@ -3,7 +3,7 @@ class LoansController < ApplicationController
   before_action :set_loan, only: %i[show edit update destroy]
 
   def index
-    @loans = Loan.where(deleted_at: nil).order(created_at: :desc)
+    @loans = visible_loans.order(created_at: :desc)
   end
 
   def show
@@ -45,7 +45,13 @@ class LoansController < ApplicationController
   private
 
   def set_loan
-    @loan = Loan.where(deleted_at: nil).find(params[:id])
+    @loan = visible_loans.find(params[:id])
+  end
+
+  # Admins can see every loan; members are limited to loans belonging to their clients.
+  def visible_loans
+    scope = Loan.where(deleted_at: nil)
+    current_user.admin? ? scope : scope.where(client_id: current_user.clients.where(deleted_at: nil).ids)
   end
 
   def loan_params

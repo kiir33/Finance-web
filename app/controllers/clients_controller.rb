@@ -3,7 +3,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: %i[show edit update destroy]
 
   def index
-    @clients = Client.where(deleted_at: nil).order(:client_id)
+    @clients = visible_clients.order(:client_id)
   end
 
   def show
@@ -41,7 +41,13 @@ class ClientsController < ApplicationController
   private
 
   def set_client
-    @client = Client.where(deleted_at: nil).find(params[:id])
+    @client = visible_clients.find(params[:id])
+  end
+
+  # Admins can see every client; members are limited to clients linked to their account.
+  def visible_clients
+    scope = Client.where(deleted_at: nil)
+    current_user.admin? ? scope : scope.where(user_id: current_user.id)
   end
 
   def client_params

@@ -5,6 +5,7 @@ one:
   name: "John Doe"
   phone_number: "555-0101"
   address: "123 Main St"
+  user: member
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
   deleted_at: 

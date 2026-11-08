@@ -2,7 +2,9 @@
 
 <h1 class="text-2xl font-bold mb-6">System Configs</h1>
 
-<%= link_to "New Config", new_system_config_path, class: "btn btn-primary mb-4" %>
+<% if current_user.admin? %>
+  <%= link_to "New Config", new_system_config_path, class: "btn btn-primary mb-4" %>
+<% end %>
 
 <table class="table">
   <thead>
@@ -23,8 +25,10 @@
         <td><%= config.description %></td>
         <td class="text-right">
           <%= link_to "Show", system_config_path(config.config_key), class: "btn btn-outline mb-1" %>
-          <%= link_to "Edit", edit_system_config_path(config.config_key), class: "btn btn-outline mb-1" %>
-          <%= button_to "Delete", system_config_path(config.config_key), method: :delete, class: "btn btn-danger mb-1" %>
+          <% if current_user.admin? %>
+            <%= link_to "Edit", edit_system_config_path(config.config_key), class: "btn btn-outline mb-1" %>
+            <%= button_to "Delete", system_config_path(config.config_key), method: :delete, class: "btn btn-danger mb-1" %>
+          <% end %>
         </td>
       </tr>
     <% end %>

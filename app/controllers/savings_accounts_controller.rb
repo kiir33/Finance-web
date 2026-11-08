@@ -3,7 +3,7 @@ class SavingsAccountsController < ApplicationController
   before_action :set_account, only: %i[show edit update destroy]
 
   def index
-    @accounts = SavingsAccount.where(deleted_at: nil).order(:id)
+    @accounts = visible_accounts.order(:id)
   end
 
   def show
@@ -45,7 +45,13 @@ class SavingsAccountsController < ApplicationController
   private
 
   def set_account
-    @account = SavingsAccount.where(deleted_at: nil).find(params[:id])
+    @account = visible_accounts.find(params[:id])
+  end
+
+  # Admins can see every account; members are limited to accounts belonging to their clients.
+  def visible_accounts
+    scope = SavingsAccount.where(deleted_at: nil)
+    current_user.admin? ? scope : scope.where(client_id: current_user.clients.where(deleted_at: nil).ids)
   end
 
   def account_params

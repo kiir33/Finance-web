@@ -1,5 +1,5 @@
 class GroupTransactionsController < ApplicationController
-  before_action :require_admin!, only: %i[new create]
+  before_action :require_admin!
 
   def index
     @transactions = GroupTransaction.order(created_at: :desc)

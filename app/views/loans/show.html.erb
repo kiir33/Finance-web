@@ -6,5 +6,7 @@
   <p><strong>Client:</strong> <%= link_to @loan.client.client_id, client_path(@loan.client) %></p>
 </div>
 
-<%= link_to "Edit", edit_loan_path(@loan), class: "btn btn-outline" %>
 <%= link_to "Back", loans_path, class: "btn btn-outline ml-2" %>
+<% if current_user.admin? %>
+  <%= link_to "Edit", edit_loan_path(@loan), class: "btn btn-outline ml-2" %>
+<% end %>

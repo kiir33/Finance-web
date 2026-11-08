@@ -60,7 +60,9 @@
       <%= link_to "Savings Accounts", savings_accounts_path, class: "btn btn-outline w-full" %>
       <%= link_to "System Configs", system_configs_path, class: "btn btn-outline w-full" %>
       <%= link_to "Audit Logs", audit_logs_path, class: "btn btn-outline w-full" %>
-      <%= link_to "Group Treasury", group_account_path(GroupAccount.first), class: "btn btn-outline w-full" %>
+      <% if @treasury %>
+        <%= link_to "Group Treasury", group_account_path(@treasury), class: "btn btn-outline w-full" %>
+      <% end %>
     </div>
   </div>
 
@@ -86,7 +88,7 @@
             <% @my_savings_accounts.each do |account| %>
               <tr>
                 <td><%= link_to account.id, savings_account_path(account) %></td>
-                <td class="text-right"><%= number_to_currency(0) %></td>
+                <td class="text-right"><%= number_to_currency(account.balance) %></td>
               </tr>
             <% end %>
           </tbody>
@@ -108,7 +110,7 @@
               <tr>
                 <td><%= link_to loan.id, loan_path(loan) %></td>
                 <td class="text-right">
-                  <%= link_to "Repayments", loan_repayments_path, class: "btn btn-outline text-xs" %>
+                  <%= link_to "Repayments", loan_repayments_path(loan_id: loan.id), class: "btn btn-outline text-xs" %>
                 </td>
               </tr>
             <% end %>
