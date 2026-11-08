@@ -1,0 +1,13 @@
+<%= form_with model: loan, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :client_id, "Client", class: "form-label" %>
+    <%= form.collection_select :client_id, @clients, :id, :client_id, {}, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit loan.persisted? ? "Update" : "Create", class: "btn btn-primary" %>
+    <%= link_to "Cancel", loans_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>

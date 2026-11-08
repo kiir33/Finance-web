@@ -1,4 +1,6 @@
 class SystemConfig < ApplicationRecord
+  include Syncable
+
   validates :config_key, presence: true, uniqueness: true
   validates :config_value, presence: true
   validates :config_type, presence: true, inclusion: { in: %w[savings loan] }

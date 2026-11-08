@@ -1,0 +1,15 @@
+<%= content_for :title, "System Config" %>
+
+<h1 class="text-2xl font-bold mb-6">System Config: <%= @config.config_key %></h1>
+
+<div class="card mb-6">
+  <p><strong>Key:</strong> <%= @config.config_key %></p>
+  <p><strong>Value:</strong> <%= @config.config_value %></p>
+  <p><strong>Type:</strong> <%= @config.config_type %></p>
+  <p><strong>Description:</strong> <%= @config.description %></p>
+</div>
+
+<%= link_to "Back", system_configs_path, class: "btn btn-outline ml-2" %>
+<% if current_user.admin? %>
+  <%= link_to "Edit", edit_system_config_path(@config.config_key), class: "btn btn-outline ml-2" %>
+<% end %>

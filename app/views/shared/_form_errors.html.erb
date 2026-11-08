@@ -1,0 +1,10 @@
+<% if object.errors.any? %>
+  <div class="flash flash-alert">
+    <h3><%= pluralize(object.errors.count, "error") %> prohibited this <%= object.class.name.humanize.downcase %> from being saved:</h3>
+    <ul>
+      <% object.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

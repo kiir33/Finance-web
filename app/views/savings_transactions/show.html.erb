@@ -1,0 +1,11 @@
+<%= content_for :title, "Savings Transaction" %>
+
+<h1 class="text-2xl font-bold mb-6">Savings Transaction</h1>
+
+<div class="card mb-6">
+  <p><strong>Account:</strong> <%= link_to @transaction.savings_account.client.client_id, client_path(@transaction.savings_account.client) %></p>
+  <p><strong>Type:</strong> <%= @transaction.transaction_type %></p>
+  <p><strong>Amount:</strong> <%= number_to_currency(@transaction.amount) %></p>
+</div>
+
+<%= link_to "Back", savings_transactions_path, class: "btn btn-outline" %>
