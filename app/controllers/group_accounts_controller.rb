@@ -3,6 +3,7 @@ class GroupAccountsController < ApplicationController
   before_action :set_account
 
   def index
+    redirect_to group_account_path(@account)
   end
 
   def show
