@@ -1,0 +1,28 @@
+<%= form_with model: config, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :config_key, "Key", class: "form-label" %>
+    <%= form.text_field :config_key, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :config_value, "Value", class: "form-label" %>
+    <%= form.text_field :config_value, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :config_type, "Type", class: "form-label" %>
+    <%= form.select :config_type, [["Savings", "savings"], ["Loan", "loan"]], {}, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :description, "Description", class: "form-label" %>
+    <%= form.text_area :description, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit config.persisted? ? "Update" : "Create", class: "btn btn-primary" %>
+    <%= link_to "Cancel", system_configs_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>

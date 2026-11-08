@@ -1,0 +1,24 @@
+<%= content_for :title, "Loan Repayments" %>
+
+<h1 class="text-2xl font-bold mb-6">Loan Repayments</h1>
+
+<%= link_to "New Repayment", new_loan_repayment_path, class: "btn btn-primary mb-4" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Loan</th>
+      <th>Amount</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @repayments.each do |repayment| %>
+      <tr>
+        <td><%= link_to repayment.loan.client.client_id, client_path(repayment.loan.client) %></td>
+        <td><%= number_to_currency(repayment.amount) %></td>
+        <td><%= repayment.created_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

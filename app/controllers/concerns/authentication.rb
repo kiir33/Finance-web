@@ -113,4 +113,26 @@ module Authentication
   def end_session
     session.delete(:user_id)
   end
+
+  def require_admin!
+    return if current_user&.admin?
+
+    if request.format.json?
+      render json: { error: { code: "forbidden", message: "Admin access required" } }, status: :forbidden
+    else
+      redirect_to root_path, alert: "Admin access required"
+    end
+    false
+  end
+
+  def require_member!
+    return if current_user&.member?
+
+    if request.format.json?
+      render json: { error: { code: "forbidden", message: "Member access required" } }, status: :forbidden
+    else
+      redirect_to root_path, alert: "Member access required"
+    end
+    false
+  end
 end

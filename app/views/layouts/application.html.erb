@@ -26,6 +26,11 @@
     <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
   </head>
   <body class="antialiased">
-    <%= yield %>
+    <%= render "shared/nav" %>
+
+    <main class="container py-6">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
   </body>
 </html>
