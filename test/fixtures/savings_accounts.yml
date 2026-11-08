@@ -2,12 +2,12 @@
 
 one:
   client: one
-  public_id: 
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:09
+  deleted_at:
 
 two:
   client: two
-  public_id: 
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:09
+  deleted_at:

@@ -1,0 +1,29 @@
+<nav class="navbar">
+  <div class="navbar-inner">
+    <%= link_to "FinanceApp", root_path, class: "navbar-brand" %>
+
+    <% if user_signed_in? %>
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-medium text-gray-700">
+          <%= current_user.email %> (<%= current_user.role.humanize %>)
+        </span>
+
+        <% if current_user.admin? %>
+          <%= link_to "Dashboard", root_path, class: "navbar-link" %>
+          <%= link_to "Clients", clients_path, class: "navbar-link" %>
+          <%= link_to "Loans", loans_path, class: "navbar-link" %>
+          <%= link_to "Savings", savings_accounts_path, class: "navbar-link" %>
+          <%= link_to "System Configs", system_configs_path, class: "navbar-link" %>
+          <%= link_to "Audit Logs", audit_logs_path, class: "navbar-link" %>
+        <% else %>
+          <%= link_to "Dashboard", root_path, class: "navbar-link" %>
+          <%= link_to "Profile", edit_password_path, class: "navbar-link" %>
+        <% end %>
+
+        <%= button_to "Logout", destroy_session_path, method: :delete, class: "navbar-link" %>
+      </div>
+    <% else %>
+      <%= link_to "Sign in", new_session_path, class: "navbar-link" %>
+    <% end %>
+  </div>
+</nav>

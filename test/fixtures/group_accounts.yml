@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  cash_balance: 9.99
-  bank_balance: 9.99
-  public_id: 
+  cash_balance: 1000.00
+  bank_balance: 5000.00
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:14
+  deleted_at:
 
 two:
-  cash_balance: 9.99
-  bank_balance: 9.99
-  public_id: 
+  cash_balance: 500.00
+  bank_balance: 2500.00
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:14
+  deleted_at:

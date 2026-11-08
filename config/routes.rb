@@ -42,6 +42,17 @@ Rails.application.routes.draw do
     end
   end
 
+  # Web UI resources (session-authenticated, HTML). Separate from /api/v1/*.
+  resources :clients
+  resources :loans
+  resources :savings_accounts
+  resources :savings_transactions, only: %i[index show new create]
+  resources :loan_repayments, only: %i[index show new create]
+  resources :group_accounts
+  resources :group_transactions, only: %i[index show new create]
+  resources :audit_logs, only: [:index]
+  resources :system_configs, param: :config_key
+
   # Root
   root "home#index"
 end
