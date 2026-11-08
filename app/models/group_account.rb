@@ -1,4 +1,6 @@
 class GroupAccount < ApplicationRecord
+  include Syncable
+
   validates :cash_balance, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :bank_balance, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 

@@ -1,4 +1,6 @@
 class SavingsAccount < ApplicationRecord
+  include Syncable
+
   belongs_to :client
 
   validates :client, presence: true

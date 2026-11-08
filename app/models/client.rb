@@ -1,4 +1,6 @@
 class Client < ApplicationRecord
+  include Syncable
+
   belongs_to :user, optional: true
 
   validates :client_id, presence: true, uniqueness: true
