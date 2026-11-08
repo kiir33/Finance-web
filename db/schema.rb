@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_08_034658) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,6 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034658) do
     t.string "name"
     t.string "phone_number"
     t.string "address"
+    t.bigint "user_id", null: true
     t.uuid "public_id"
     t.integer "lock_version"
     t.datetime "deleted_at"
@@ -37,6 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034658) do
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_clients_on_client_id", unique: true
     t.index ["public_id"], name: "index_clients_on_public_id", unique: true
+    t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
   create_table "group_accounts", force: :cascade do |t|
@@ -181,6 +183,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034658) do
   end
 
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "clients", "users"
   add_foreign_key "group_transactions", "group_accounts"
   add_foreign_key "loan_repayments", "loans"
   add_foreign_key "savings_transactions", "savings_accounts"
