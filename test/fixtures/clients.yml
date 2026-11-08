@@ -8,7 +8,7 @@ one:
   user: member
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 
+  deleted_at:
 
 two:
   client_id: "102"

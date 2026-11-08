@@ -5,11 +5,11 @@ one:
   bank_balance: 5000.00
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at:
+  deleted_at: nil
 
 two:
-  cash_balance: 500.00
-  bank_balance: 2500.00
+  cash_balance: 2000.00
+  bank_balance: 10000.00
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at:
+  deleted_at: nil

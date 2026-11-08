@@ -3,11 +3,11 @@
 one:
   user: admin
   action: "create_client"
-  details: "{\"client_id\":\"101\"}"
+  details: "Created client John Doe"
   public_id: <%= SecureRandom.uuid %>
 
 two:
-  user: member
-  action: "view_profile"
-  details: "{}"
+  user: admin
+  action: "update_loan"
+  details: "Updated loan for client Jane Smith"
   public_id: <%= SecureRandom.uuid %>

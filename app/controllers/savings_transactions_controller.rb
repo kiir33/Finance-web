@@ -1,6 +1,6 @@
 class SavingsTransactionsController < ApplicationController
   before_action :require_admin!, only: %i[new create]
-  before_action :set_account, only: %i[new create]
+  before_action :set_accounts, only: %i[new create]
 
   def index
     @transactions = visible_transactions.order(created_at: :desc)
@@ -25,7 +25,7 @@ class SavingsTransactionsController < ApplicationController
 
   private
 
-  def set_account
+  def set_accounts
     @accounts = SavingsAccount.where(deleted_at: nil).order(:id)
   end
 
