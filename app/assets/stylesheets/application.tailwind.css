@@ -2,7 +2,7 @@
  * Tailwind CSS is loaded via CDN in the application layout (documented choice
  * per RAILS_BACKEND_PLAN.md Phase 5 / issue #11 acceptance criteria:
  * "importmap/CDN if preferred — document choice"). This file holds base
- * application styles served via Propsshaft and sits on top of Tailwind
+ * application styles served via Propshaft and sits on top of Tailwind
  * utilities applied directly in the views.
  */
 
