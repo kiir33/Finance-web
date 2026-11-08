@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  device_id: MyString
+  device_id: device-1
   last_synced_at: 2026-11-08 06:29:14
 
 two:
-  device_id: MyString
+  device_id: device-2
   last_synced_at: 2026-11-08 06:29:14
