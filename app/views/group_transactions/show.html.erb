@@ -1,0 +1,11 @@
+<%= content_for :title, "Group Transaction" %>
+
+<h1 class="text-2xl font-bold mb-6">Group Transaction</h1>
+
+<div class="card mb-6">
+  <p><strong>Group Account:</strong> <%= @transaction.group_account_id %></p>
+  <p><strong>Type:</strong> <%= @transaction.transaction_type %></p>
+  <p><strong>Amount:</strong> <%= number_to_currency(@transaction.amount) %></p>
+</div>
+
+<%= link_to "Back", group_transactions_path, class: "btn btn-outline" %>

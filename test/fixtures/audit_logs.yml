@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  action: MyString
-  details: MyText
-  public_id: 
+  user: admin
+  action: "create_client"
+  details: "Created client John Doe"
+  public_id: <%= SecureRandom.uuid %>
 
 two:
-  user: two
-  action: MyString
-  details: MyText
-  public_id: 
+  user: admin
+  action: "update_loan"
+  details: "Updated loan for client Jane Smith"
+  public_id: <%= SecureRandom.uuid %>

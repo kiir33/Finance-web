@@ -10,8 +10,9 @@ class SessionsController < ApplicationController
     user = User.authenticate_by(email: params[:email], password: params[:password])
     if user
       start_session(user)
+      token = issue_jwt(user)
       if request.format.json?
-        render json: { data: { token: issue_jwt(user), user: { id: user.id, email: user.email, role: user.role } } }, status: :ok
+        render json: { data: { token: token, user: { id: user.id, email: user.email, role: user.role } } }, status: :ok
       else
         redirect_to root_path, notice: "Signed in successfully"
       end
@@ -22,6 +23,13 @@ class SessionsController < ApplicationController
         flash.now[:alert] = "Invalid email or password"
         render :new, status: :unprocessable_entity
       end
+    end
+  rescue RuntimeError => e
+    if request.format.json?
+      render json: { error: { code: "max_admin_sessions", message: e.message } }, status: :forbidden
+    else
+      flash.now[:alert] = e.message
+      render :new, status: :forbidden
     end
   end
 

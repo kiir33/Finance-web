@@ -3,6 +3,9 @@ module Api
     class ApplicationController < ActionController::API
       include Authentication
 
+      # API controllers authenticate via JWT/session and return JSON 401.
+      before_action :authenticate_api!
+
       private
 
       def admin_only!

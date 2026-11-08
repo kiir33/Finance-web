@@ -18,11 +18,19 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <!-- Tailwind CSS via CDN (documented choice per issue #11) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
   </head>
+  <body class="antialiased">
+    <%= render "shared/nav" %>
 
-  <body>
-    <%= yield %>
+    <main class="container py-6">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
   </body>
 </html>
