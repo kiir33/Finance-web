@@ -4,12 +4,12 @@ one:
   record_type: "client"
   record_id: "1"
   public_id: <%= SecureRandom.uuid %>
-  changed_at: 2026-11-08 06:29:14
+  changed_at: <%= Time.current.iso8601 %>
   deleted: false
 
 two:
   record_type: "loan"
   record_id: "1"
   public_id: <%= SecureRandom.uuid %>
-  changed_at: 2026-11-08 06:29:14
+  changed_at: <%= Time.current.iso8601 %>
   deleted: false

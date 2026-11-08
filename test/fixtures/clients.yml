@@ -7,7 +7,7 @@ one:
   address: "123 Main St"
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 
+  deleted_at: nil
 
 two:
   client_id: "102"
@@ -16,4 +16,4 @@ two:
   address: "456 Oak Ave"
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at:
+  deleted_at: nil
