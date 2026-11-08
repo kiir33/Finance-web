@@ -20,7 +20,9 @@ module Api
       test "admin can list non-deleted clients" do
         @session.get api_v1_clients_url, headers: @headers, as: :json
         @session.assert_response :ok
-        assert @session.response.parsed_body["data"].is_a?(Array)
+        data = @session.response.parsed_body["data"]
+        assert data.is_a?(Array)
+        assert_not_empty data
       end
 
       test "admin can create a client" do
