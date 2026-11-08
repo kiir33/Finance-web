@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_08_203213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -141,8 +141,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "public_id"
+    t.datetime "deleted_at"
     t.index ["config_key"], name: "index_system_configs_on_config_key", unique: true
     t.index ["config_type"], name: "index_system_configs_on_config_type"
+    t.index ["deleted_at"], name: "index_system_configs_on_deleted_at"
   end
 
   create_table "token_blocklists", force: :cascade do |t|
