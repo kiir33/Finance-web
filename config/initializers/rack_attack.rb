@@ -69,7 +69,7 @@ class Rack::Attack
 
   # Allow localhost and tunnel URLs for development
   safelist("allow-localhost") do |req|
-    ["127.0.0.1", "::1", "localhost"].include?(req.ip)
+    [ "127.0.0.1", "::1", "localhost" ].include?(req.ip)
   end
 end
 

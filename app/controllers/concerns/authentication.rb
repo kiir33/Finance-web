@@ -12,7 +12,9 @@ module Authentication
   class_methods do
     def allow_unauthenticated_access(**options)
       skip_before_action :require_authentication, **options
-      skip_before_action :authenticate_api!, **options
+      # `authenticate_api!` is only registered on API controllers, so skipping it
+      # must not raise for web controllers that never declared the callback.
+      skip_before_action :authenticate_api!, raise: false, **options
     end
   end
 
