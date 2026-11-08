@@ -5,8 +5,16 @@ module Api
       def upload
         changes = params[:changes] || []
 
-        results = changes.map do |change|
-          process_change(change)
+        results = nil
+        ActiveRecord::Base.transaction do
+          results = changes.map do |change|
+            process_change(change)
+          end
+
+          if results.detect { |r| r[:error] == "conflict" } ||
+             results.detect { |r| r[:error] == "forbidden" }
+            raise ActiveRecord::Rollback
+          end
         end
 
         conflict = results.detect { |r| r[:error] == "conflict" }
@@ -14,6 +22,14 @@ module Api
           render json: {
             error: { code: "conflict", message: "Record was updated by another session", current: conflict[:current] }
           }, status: :conflict
+          return
+        end
+
+        forbidden = results.detect { |r| r[:error] == "forbidden" }
+        if forbidden
+          render json: {
+            error: { code: "forbidden", message: "Admin access required" }
+          }, status: :forbidden
           return
         end
 
@@ -61,7 +77,6 @@ module Api
         payload = change[:payload]
         local_temp_id = change[:local_temp_id]
         public_id = change[:public_id]
-        client_updated_at = change[:client_updated_at]
 
         case record_type
         when "client"
