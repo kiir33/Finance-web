@@ -1,14 +1,39 @@
 module Api
   module V1
     class SyncController < ApplicationController
+      # Batch upload of client-side changes since last sync.
       def upload
         changes = params[:changes] || []
 
-        results = changes.map do |change|
-          process_change(change)
+        results = nil
+        ActiveRecord::Base.transaction do
+          results = changes.map do |change|
+            process_change(change)
+          end
+
+          if results.detect { |r| r[:error] == "conflict" } ||
+             results.detect { |r| r[:error] == "forbidden" }
+            raise ActiveRecord::Rollback
+          end
         end
 
-        # Update sync state
+        conflict = results.detect { |r| r[:error] == "conflict" }
+        if conflict
+          render json: {
+            error: { code: "conflict", message: "Record was updated by another session", current: conflict[:current] }
+          }, status: :conflict
+          return
+        end
+
+        forbidden = results.detect { |r| r[:error] == "forbidden" }
+        if forbidden
+          render json: {
+            error: { code: "forbidden", message: "Admin access required" }
+          }, status: :forbidden
+          return
+        end
+
+        # Upsert sync state per device
         device_id = params[:device_id]
         if device_id
           sync_state = SyncState.find_or_initialize_by(device_id: device_id)
@@ -22,6 +47,7 @@ module Api
         }, status: :ok
       end
 
+      # Delta download: all sync_outbox entries changed after `since`.
       def download
         since = params[:since] || 1.year.ago.iso8601
 
@@ -51,7 +77,6 @@ module Api
         payload = change[:payload]
         local_temp_id = change[:local_temp_id]
         public_id = change[:public_id]
-        client_updated_at = change[:client_updated_at]
 
         case record_type
         when "client"
@@ -70,27 +95,30 @@ module Api
       def process_client_change(op, payload, local_temp_id, public_id)
         case op
         when "create"
-          client = Client.new(payload.permit(:client_id, :name, :phone_number, :address))
+          client = Client.new(payload.permit(:client_id, :name, :phone_number, :address, :user_id))
           client.public_id = public_id if public_id.present?
           if client.save
-            log_sync_outbox("client", client.id, client.public_id, false)
             { local_temp_id: local_temp_id, public_id: client.public_id }
           else
             { local_temp_id: local_temp_id, error: client.errors.full_messages }
           end
         when "update"
           client = Client.find_by(public_id: public_id)
-          if client && client.update(payload.permit(:client_id, :name, :phone_number, :address))
-            log_sync_outbox("client", client.id, client.public_id, false)
+          unless client
+            return { public_id: public_id, error: "not_found" }
+          end
+          if stale?(client, payload[:lock_version])
+            return { public_id: public_id, error: "conflict", current: client_slice(client) }
+          end
+          if client.update(payload.permit(:client_id, :name, :phone_number, :address, :user_id))
             { public_id: client.public_id }
           else
-            { public_id: public_id, error: "not_found" }
+            { public_id: public_id, error: client.errors.full_messages }
           end
         when "delete"
           client = Client.find_by(public_id: public_id)
           if client
             client.update(deleted_at: Time.current)
-            log_sync_outbox("client", client.id, client.public_id, true)
             { public_id: public_id }
           else
             { public_id: public_id, error: "not_found" }
@@ -103,24 +131,27 @@ module Api
         when "create"
           loan = Loan.new(payload.permit(:client_id, :public_id, :lock_version))
           if loan.save
-            log_sync_outbox("loan", loan.id, loan.public_id, false)
             { local_temp_id: local_temp_id, public_id: loan.public_id }
           else
             { local_temp_id: local_temp_id, error: loan.errors.full_messages }
           end
         when "update"
           loan = Loan.find_by(public_id: public_id)
-          if loan && loan.update(payload.permit(:lock_version))
-            log_sync_outbox("loan", loan.id, loan.public_id, false)
+          unless loan
+            return { public_id: public_id, error: "not_found" }
+          end
+          if stale?(loan, payload[:lock_version])
+            return { public_id: public_id, error: "conflict", current: loan_slice(loan) }
+          end
+          if loan.update(payload.permit(:client_id, :lock_version))
             { public_id: loan.public_id }
           else
-            { public_id: public_id, error: "not_found_or_conflict" }
+            { public_id: public_id, error: loan.errors.full_messages }
           end
         when "delete"
           loan = Loan.find_by(public_id: public_id)
           if loan
             loan.update(deleted_at: Time.current)
-            log_sync_outbox("loan", loan.id, loan.public_id, true)
             { public_id: public_id }
           else
             { public_id: public_id, error: "not_found" }
@@ -133,24 +164,27 @@ module Api
         when "create"
           account = SavingsAccount.new(payload.permit(:client_id, :public_id, :lock_version))
           if account.save
-            log_sync_outbox("savings_account", account.id, account.public_id, false)
             { local_temp_id: local_temp_id, public_id: account.public_id }
           else
             { local_temp_id: local_temp_id, error: account.errors.full_messages }
           end
         when "update"
           account = SavingsAccount.find_by(public_id: public_id)
-          if account && account.update(payload.permit(:lock_version))
-            log_sync_outbox("savings_account", account.id, account.public_id, false)
+          unless account
+            return { public_id: public_id, error: "not_found" }
+          end
+          if stale?(account, payload[:lock_version])
+            return { public_id: public_id, error: "conflict", current: account_slice(account) }
+          end
+          if account.update(payload.permit(:client_id, :lock_version))
             { public_id: account.public_id }
           else
-            { public_id: public_id, error: "not_found_or_conflict" }
+            { public_id: public_id, error: account.errors.full_messages }
           end
         when "delete"
           account = SavingsAccount.find_by(public_id: public_id)
           if account
             account.update(deleted_at: Time.current)
-            log_sync_outbox("savings_account", account.id, account.public_id, true)
             { public_id: public_id }
           else
             { public_id: public_id, error: "not_found" }
@@ -159,30 +193,33 @@ module Api
       end
 
       def process_system_config_change(op, payload, public_id)
-        admin_only!
+        return { error: "forbidden" } unless current_user&.admin?
 
         case op
         when "create"
           config = SystemConfig.new(payload.permit(:config_key, :config_value, :config_type, :description))
           if config.save
-            log_sync_outbox("system_config", config.id, config.config_key, false)
             { config_key: config.config_key }
           else
             { config_key: payload[:config_key], error: config.errors.full_messages }
           end
         when "update"
           config = SystemConfig.find_by(config_key: public_id)
-          if config && config.update(payload.permit(:config_value, :config_type, :description))
-            log_sync_outbox("system_config", config.id, config.config_key, false)
+          unless config
+            return { config_key: public_id, error: "not_found" }
+          end
+          if stale?(config, payload[:lock_version])
+            return { config_key: public_id, error: "conflict", current: config_slice(config) }
+          end
+          if config.update(payload.permit(:config_value, :config_type, :description))
             { config_key: config.config_key }
           else
-            { config_key: public_id, error: "not_found_or_conflict" }
+            { config_key: public_id, error: config.errors.full_messages }
           end
         when "delete"
           config = SystemConfig.find_by(config_key: public_id)
           if config
             config.destroy
-            log_sync_outbox("system_config", config.id, config.config_key, true)
             { config_key: public_id }
           else
             { config_key: public_id, error: "not_found" }
@@ -190,14 +227,29 @@ module Api
         end
       end
 
-      def log_sync_outbox(record_type, record_id, public_id, deleted)
-        SyncOutbox.create!(
-          record_type: record_type,
-          record_id: record_id.to_s,
-          public_id: public_id.to_s,
-          changed_at: Time.current,
-          deleted: deleted
-        )
+      def stale?(record, client_lock_version)
+        return false if client_lock_version.nil?
+        record.lock_version != client_lock_version.to_i
+      end
+
+      def client_slice(client)
+        { id: client.public_id, client_id: client.client_id, name: client.name,
+          lock_version: client.lock_version, updated_at: client.updated_at, deleted_at: client.deleted_at }
+      end
+
+      def loan_slice(loan)
+        { id: loan.public_id, client_id: loan.client_id, lock_version: loan.lock_version,
+          updated_at: loan.updated_at, deleted_at: loan.deleted_at }
+      end
+
+      def account_slice(account)
+        { id: account.public_id, client_id: account.client_id, lock_version: account.lock_version,
+          updated_at: account.updated_at, deleted_at: account.deleted_at }
+      end
+
+      def config_slice(config)
+        { key: config.config_key, value: config.config_value, type: config.config_type,
+          lock_version: config.lock_version, updated_at: config.updated_at }
       end
     end
   end

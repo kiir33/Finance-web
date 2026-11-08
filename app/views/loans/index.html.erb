@@ -1,0 +1,30 @@
+<%= content_for :title, "Loans" %>
+
+<h1 class="text-2xl font-bold mb-6">Loans</h1>
+
+<% if current_user.admin? %>
+  <%= link_to "New Loan", new_loan_path, class: "btn btn-primary mb-4" %>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Client</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loans.each do |loan| %>
+      <tr>
+        <td><%= link_to loan.client.client_id, client_path(loan.client) %></td>
+        <td class="text-right">
+          <%= link_to "Show", loan_path(loan), class: "btn btn-outline mb-1" %>
+          <% if current_user.admin? %>
+            <%= link_to "Edit", edit_loan_path(loan), class: "btn btn-outline mb-1" %>
+            <%= button_to "Archive", loan_path(loan), method: :delete, class: "btn btn-danger mb-1" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

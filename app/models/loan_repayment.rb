@@ -1,4 +1,6 @@
 class LoanRepayment < ApplicationRecord
+  include Syncable
+
   belongs_to :loan
 
   validates :loan, presence: true

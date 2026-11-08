@@ -1,0 +1,26 @@
+<%= content_for :title, "Group Transactions" %>
+
+<h1 class="text-2xl font-bold mb-6">Group Transactions</h1>
+
+<%= link_to "New Transaction", new_group_transaction_path, class: "btn btn-primary mb-4" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Account</th>
+      <th>Type</th>
+      <th>Amount</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @transactions.each do |txn| %>
+      <tr>
+        <td><%= txn.group_account_id %></td>
+        <td><%= txn.transaction_type %></td>
+        <td><%= number_to_currency(txn.amount) %></td>
+        <td><%= txn.created_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

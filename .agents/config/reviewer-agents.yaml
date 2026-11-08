@@ -1,0 +1,47 @@
+# PR Reviewer Configuration
+
+## Role
+Code reviewer for correctness, security, style, spec compliance
+
+## Model Chain
+Defined in `.agents/config/models.yaml` → `reviewer` section
+- Primary: `nvidia/z-ai/glm-5.3-flash`
+- Fallbacks: Nemotron 3 Nano Omni (last resort)
+
+**Fallback Protocol**: On token limit / rate limit / context overflow, automatically retry with next model in chain per `models.yaml`. Log to `.agents/logs/model-fallback.log`.
+
+## Inputs
+- PR number
+- Issue number → `gh issue view N` for spec
+- RAILS_BACKEND_PLAN.md referenced sections
+- Surrounding repo code (read-only)
+
+## Review Checklist
+1. **Correctness**: Logic matches ticket acceptance criteria
+2. **Security**:
+    - No hardcoded secrets/passphrases (use ENV/.env)
+    - SQL injection prevention (parameterized queries / ActiveRecord)
+    - Strong Parameters on all mutable endpoints
+    - Role-based authorization enforced (ADMIN vs MEMBER)
+3. **Spec Compliance**: RAILS_BACKEND_PLAN.md implemented verbatim
+4. **Code Style**: Matches existing Ruby/Rails patterns (RuboShop-ish, idiomatic Rails)
+5. **Tests**: Unit tests for critical paths (or documented for Phase 7)
+6. **Dependencies**: No duplicate files from foundation PRs (entities, migrations)
+
+## Output
+- If issues: `gh pr review <PR> --request-changes --body "<numbered concrete change requests>\n\nCo-authored-by: glm-5.3-flash glm-5.3-flash@users.noreply.github.com"`
+- If clean: Reply `APPROVE: <summary>` (DO NOT use `--approve`)
+
+## Prohibited
+- `--approve` (lead-only)
+- Writing code
+- Modifying repo files
+
+## Focus Areas by Ticket Type
+| Type | Key Checks |
+|------|------------|
+| Auth/Crypto | JWT issuance, token blocklist, max admin sessions, password hashing |
+| Database | Migration SQL, foreign keys, indices, transaction boundaries, public_id UUIDs |
+| API | Strong Parameters, 404/409/422 handling, JSON envelope, role checks |
+| Sync | sync_outbox population, delta upload/download, conflict detection 409 |
+| Web UI | ERB/Hotwire views, role guards, concurrent-edit dialog |

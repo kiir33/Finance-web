@@ -1,4 +1,6 @@
 class AuditLog < ApplicationRecord
+  include Syncable
+
   belongs_to :user, optional: true
 
   validates :action, presence: true

@@ -94,7 +94,22 @@ Pick one provider. Do not split across AWS and Azure.
 | Phase 7f | Production deploy | Point custom domain at production. |
 | Phase 7g | Tunnel retirement | Document cloudflared shutdown; notify users to use production domain. |
 
-## 7. Risks
+## 7. Tunnel Restart Procedure (Phase 1)
+
+During Phase 1 (cloudflared tunnel), the backend is reachable via a tunnel
+URL that may change on cloudflared restart. No app release is required — only
+the mobile app's `BASE_URL` needs updating.
+
+1. **Restart cloudflared** on the tunnel host (`cloudflared tunnel restart` or
+   equivalent platform restart).
+2. **Copy the new tunnel URL** from the cloudflared dashboard/logs.
+3. **Update `BASE_URL`** in the mobile app Settings (or device settings) to the
+   new tunnel URL. This does not require an app store release.
+4. **Verify** `GET <BASE_URL>/up` returns `200 OK` (production smoke test).
+5. **No code change or deploy** is needed — the Rails app is unaffected by the
+   tunnel URL change.
+
+## 8. Risks
 
 | Risk | Mitigation |
 |------|------------|
@@ -104,7 +119,7 @@ Pick one provider. Do not split across AWS and Azure.
 | Secret leakage | Never commit `.env`; use platform secret injection; rotate after any leak. |
 | Migration failure in production | Backup DB before every migration; test migration on staging copy first. |
 
-## 8. Obsidian Graph View Notes
+## 9. Obsidian Graph View Notes
 
 - **Wikilinks**: `[[../../FinanceApp-KnowledgeBase/DEPLOYMENT_PLAN.md]]`, `[[../../FinanceApp-KnowledgeBase/RAILS_BACKEND_PLAN.md]]`
 - **Tags**: `financeapp`, `backend`, `deployment`, `infrastructure`

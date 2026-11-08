@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_08_203213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -141,8 +141,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "public_id"
+    t.datetime "deleted_at"
     t.index ["config_key"], name: "index_system_configs_on_config_key", unique: true
     t.index ["config_type"], name: "index_system_configs_on_config_type"
+    t.index ["deleted_at"], name: "index_system_configs_on_deleted_at"
+  end
+
+  create_table "token_blocklists", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exp"], name: "index_token_blocklists_on_exp"
+    t.index ["jti"], name: "index_token_blocklists_on_jti", unique: true
+    t.index ["user_id"], name: "index_token_blocklists_on_user_id"
+  end
+
+  create_table "user_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token_digest", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_user_sessions_on_expires_at"
+    t.index ["token_digest"], name: "index_user_sessions_on_token_digest", unique: true
+    t.index ["user_id", "created_at"], name: "index_user_sessions_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_user_sessions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -162,4 +189,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_034800) do
   add_foreign_key "group_transactions", "group_accounts"
   add_foreign_key "loan_repayments", "loans"
   add_foreign_key "savings_transactions", "savings_accounts"
+  add_foreign_key "token_blocklists", "users"
+  add_foreign_key "user_sessions", "users"
 end

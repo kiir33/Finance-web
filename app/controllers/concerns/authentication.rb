@@ -12,6 +12,9 @@ module Authentication
   class_methods do
     def allow_unauthenticated_access(**options)
       skip_before_action :require_authentication, **options
+      # `authenticate_api!` is only registered on API controllers, so skipping it
+      # must not raise for web controllers that never declared the callback.
+      skip_before_action :authenticate_api!, raise: false, **options
     end
   end
 
@@ -46,6 +49,14 @@ module Authentication
     end
   end
 
+  # API-specific authentication: returns JSON 401 instead of redirecting.
+  # Applied to API controllers via `before_action :authenticate_api!`.
+  def authenticate_api!
+    return if current_user
+
+    render json: { error: { code: "unauthenticated", message: "Login required" } }, status: :unauthorized
+  end
+
   def bearer_token
     pattern = /^Bearer /
     header  = request.headers["Authorization"]
@@ -56,14 +67,43 @@ module Authentication
     return unless token
 
     payload = JWT.decode(token, ENV.fetch("API_TOKEN_SECRET"), true, algorithm: "HS256").first
-    User.find_by(id: payload["user_id"])
-  rescue JWT::DecodeError, JWT::ExpiredSignature
+
+    # Check if token is revoked
+    return nil if TokenBlocklist.revoked?(payload["jti"])
+
+    user = User.find_by(id: payload["user_id"])
+
+    # For JWT tokens, verify user session exists and is valid
+    if user && payload["jti"]
+      user_session = UserSession.active.find_by(user: user)
+      return nil unless user_session && BCrypt::Password.new(user_session.token_digest) == token
+    end
+
+    user
+  rescue JWT::DecodeError, JWT::ExpiredSignature, BCrypt::Errors::InvalidHash
     nil
   end
 
   def issue_jwt(user)
-    payload = { user_id: user.id, exp: 24.hours.from_now.to_i }
-    JWT.encode(payload, ENV.fetch("API_TOKEN_SECRET"), "HS256")
+    jti = SecureRandom.uuid
+    exp = 24.hours.from_now.to_i
+    payload = { user_id: user.id, exp: exp, jti: jti }
+    token = JWT.encode(payload, ENV.fetch("API_TOKEN_SECRET"), "HS256")
+
+    # Create user session for tracking
+    UserSession.create_for_user!(user, token, request, expires_in: 24.hours)
+
+    token
+  end
+
+  def revoke_jwt(token)
+    return unless token
+
+    payload = JWT.decode(token, ENV.fetch("API_TOKEN_SECRET"), true, algorithm: "HS256").first
+    TokenBlocklist.revoke!(payload["jti"], Time.at(payload["exp"]), current_user) if payload["jti"] && payload["exp"]
+    UserSession.revoke_token(token)
+  rescue JWT::DecodeError
+    nil
   end
 
   def start_session(user)
@@ -72,5 +112,27 @@ module Authentication
 
   def end_session
     session.delete(:user_id)
+  end
+
+  def require_admin!
+    return if current_user&.admin?
+
+    if request.format.json?
+      render json: { error: { code: "forbidden", message: "Admin access required" } }, status: :forbidden
+    else
+      redirect_to root_path, alert: "Admin access required"
+    end
+    false
+  end
+
+  def require_member!
+    return if current_user&.member?
+
+    if request.format.json?
+      render json: { error: { code: "forbidden", message: "Member access required" } }, status: :forbidden
+    else
+      redirect_to root_path, alert: "Member access required"
+    end
+    false
   end
 end
