@@ -2,16 +2,16 @@
 
 one:
   savings_account: one
-  amount: 9.99
-  transaction_type: MyString
-  public_id: 
+  amount: 100.00
+  transaction_type: "deposit"
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:14
+  deleted_at: nil
 
 two:
   savings_account: two
-  amount: 9.99
-  transaction_type: MyString
-  public_id: 
+  amount: 50.00
+  transaction_type: "withdrawal"
+  public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: 2026-11-08 06:29:14
+  deleted_at: nil
