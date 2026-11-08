@@ -1,6 +1,6 @@
 class GroupAccountsController < ApplicationController
   before_action :require_admin!, only: %i[edit update]
-  before_action :set_account
+  before_action :set_account, only: %i[edit update]
 
   def index
   end
