@@ -19,7 +19,7 @@ class Rack::Attack
   self.throttled_responder = ->(req) {
     [ 429,
       { "Content-Type" => "application/json" },
-      [{ error: { code: "rate_limited", message: "Too many requests. Please try again later." } }.to_json]
+      [ { error: { code: "rate_limited", message: "Too many requests. Please try again later." } }.to_json ]
     ]
   }
 end

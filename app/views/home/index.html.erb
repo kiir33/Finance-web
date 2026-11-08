@@ -1,18 +1,152 @@
-<h1>FinanceApp Dashboard</h1>
+<%= content_for :title, "Dashboard" %>
 
-<% if user_signed_in? %>
-  <p>Welcome, <%= current_user.email %> (<%= current_user.role %>)</p>
+<% if current_user.admin? %>
+  <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-  <h2>Quick Links</h2>
-  <ul>
-    <li><%= link_to "Clients", api_v1_clients_path %></li>
-    <li><%= link_to "Loans", api_v1_loans_path %></li>
-    <li><%= link_to "Savings Accounts", api_v1_savings_accounts_path %></li>
-    <li><%= link_to "System Configs", api_v1_system_configs_path %></li>
-    <li><%= link_to "Audit Logs", api_v1_audit_logs_path %></li>
-  </ul>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="card">
+      <h3 class="text-sm font-medium text-gray-500 mb-2">Group Treasury</h3>
+      <p class="text-2xl font-bold">
+        <%= number_to_currency((@treasury&.cash_balance || 0) + (@treasury&.bank_balance || 0)) %>
+      </p>
+      <p class="text-sm text-gray-500">
+        Cash <%= number_to_currency(@treasury&.cash_balance || 0) %> ·
+        Bank <%= number_to_currency(@treasury&.bank_balance || 0) %>
+      </p>
+    </div>
 
-  <p><%= button_to "Logout", destroy_session_path, method: :delete %></p>
+    <div class="card">
+      <h3 class="text-sm font-medium text-gray-500 mb-2">Clients</h3>
+      <p class="text-2xl font-bold"><%= @client_count %></p>
+      <%= link_to "Manage clients", clients_path, class: "btn btn-outline text-xs mt-2" %>
+    </div>
+
+    <div class="card">
+      <h3 class="text-sm font-medium text-gray-500 mb-2">Active Loans</h3>
+      <p class="text-2xl font-bold"><%= @active_loan_count %></p>
+      <%= link_to "Manage loans", loans_path, class: "btn btn-outline text-xs mt-2" %>
+    </div>
+  </div>
+
+  <div class="card mb-6">
+    <h3 class="text-sm font-medium text-gray-500 mb-4">Recent Savings Transactions</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @pending_savings_txns.each do |txn| %>
+          <tr>
+            <td><%= link_to txn.savings_account.client.client_id, client_path(txn.savings_account.client) %></td>
+            <td><%= txn.transaction_type %></td>
+            <td><%= number_to_currency(txn.amount) %></td>
+            <td><%= txn.created_at %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 class="text-sm font-medium text-gray-500 mb-4">Quick Links</h3>
+    <div class="flex flex-col gap-2">
+      <%= link_to "Clients", clients_path, class: "btn btn-outline w-full" %>
+      <%= link_to "Loans", loans_path, class: "btn btn-outline w-full" %>
+      <%= link_to "Savings Accounts", savings_accounts_path, class: "btn btn-outline w-full" %>
+      <%= link_to "System Configs", system_configs_path, class: "btn btn-outline w-full" %>
+      <%= link_to "Audit Logs", audit_logs_path, class: "btn btn-outline w-full" %>
+      <%= link_to "Group Treasury", group_account_path(GroupAccount.first), class: "btn btn-outline w-full" %>
+    </div>
+  </div>
+
 <% else %>
-  <p><%= link_to "Log in", new_session_path %></p>
+  <h1 class="text-2xl font-bold mb-6">Member Dashboard</h1>
+
+  <% if @my_client %>
+    <div class="card mb-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-4">Your Profile</h3>
+      <p><strong>Member code:</strong> <%= @my_client.client_id %></p>
+      <p><strong>Name:</strong> <%= @my_client.name %></p>
+      <p><strong>Phone:</strong> <%= @my_client.phone_number %></p>
+    </div>
+
+    <div class="card mb-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-4">Your Savings Accounts</h3>
+      <% if @my_savings_accounts.any? %>
+        <table class="table">
+          <thead>
+            <tr><th>Account</th><th class="text-right">Balance</th></tr>
+          </thead>
+          <tbody>
+            <% @my_savings_accounts.each do |account| %>
+              <tr>
+                <td><%= link_to account.id, savings_account_path(account) %></td>
+                <td class="text-right"><%= number_to_currency(0) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-gray-500">No savings accounts.</p>
+      <% end %>
+    </div>
+
+    <div class="card mb-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-4">Your Active Loans</h3>
+      <% if @my_active_loans.any? %>
+        <table class="table">
+          <thead>
+            <tr><th>Loan</th><th class="text-right">Actions</th></tr>
+          </thead>
+          <tbody>
+            <% @my_active_loans.each do |loan| %>
+              <tr>
+                <td><%= link_to loan.id, loan_path(loan) %></td>
+                <td class="text-right">
+                  <%= link_to "Repayments", loan_repayments_path, class: "btn btn-outline text-xs" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-gray-500">No active loans.</p>
+      <% end %>
+    </div>
+
+    <div class="card">
+      <h3 class="text-sm font-medium text-gray-500 mb-4">Your Recent Repayments</h3>
+      <% if @my_repayments&.any? %>
+        <table class="table">
+          <thead>
+            <tr><th>Loan</th><th class="text-right">Amount</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            <% @my_repayments.each do |repayment| %>
+              <tr>
+                <td><%= link_to repayment.loan.client.client_id, client_path(repayment.loan.client) %></td>
+                <td class="text-right"><%= number_to_currency(repayment.amount) %></td>
+                <td><%= repayment.created_at %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-gray-500">No repayments yet.</p>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= link_to "Change Password", edit_password_path, class: "btn btn-primary" %>
+    </div>
+  <% else %>
+    <div class="alert flash-alert">
+      No client profile is linked to your account. Please contact an administrator.
+    </div>
+  <% end %>
 <% end %>
