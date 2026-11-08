@@ -5,9 +5,10 @@ one:
   name: "John Doe"
   phone_number: "555-0101"
   address: "123 Main St"
+  user: member
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: nil
+  deleted_at:
 
 two:
   client_id: "102"
@@ -16,4 +17,4 @@ two:
   address: "456 Oak Ave"
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: nil
+  deleted_at:

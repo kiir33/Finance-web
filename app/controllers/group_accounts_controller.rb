@@ -1,8 +1,9 @@
 class GroupAccountsController < ApplicationController
-  before_action :require_admin!, only: %i[edit update]
-  before_action :set_account, only: %i[edit update]
+  before_action :require_admin!
+  before_action :set_account
 
   def index
+    redirect_to group_account_path(@account)
   end
 
   def show
@@ -22,7 +23,7 @@ class GroupAccountsController < ApplicationController
   private
 
   def set_account
-    @account = GroupAccount.first || GroupAccount.create!(cash_balance: 0, bank_balance: 0)
+    @account = GroupAccount.where(deleted_at: nil).first || GroupAccount.create!(cash_balance: 0, bank_balance: 0)
   end
 
   def account_params

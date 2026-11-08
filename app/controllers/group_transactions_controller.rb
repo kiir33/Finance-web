@@ -1,12 +1,12 @@
 class GroupTransactionsController < ApplicationController
-  before_action :require_admin!, only: %i[new create]
+  before_action :require_admin!
 
   def index
-    @transactions = GroupTransaction.order(created_at: :desc)
+    @transactions = GroupTransaction.where(deleted_at: nil).order(created_at: :desc)
   end
 
   def show
-    @transaction = GroupTransaction.find(params[:id])
+    @transaction = GroupTransaction.where(deleted_at: nil).find(params[:id])
   end
 
   def new

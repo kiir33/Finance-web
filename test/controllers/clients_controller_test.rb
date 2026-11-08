@@ -27,4 +27,22 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
     get clients_url
     assert_redirected_to new_session_url
   end
+
+  test "member only sees clients linked to their own account" do
+    delete destroy_session_url
+    post session_url, params: { email: "member@example.com", password: "password123" }
+
+    get clients_url
+    assert_response :success
+    assert_includes response.body, "101"
+    assert_not_includes response.body, "102"
+  end
+
+  test "member cannot view a client linked to another account" do
+    delete destroy_session_url
+    post session_url, params: { email: "member@example.com", password: "password123" }
+
+    get client_url(clients(:two))
+    assert_response :not_found
+  end
 end

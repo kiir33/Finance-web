@@ -9,5 +9,7 @@
   <p><strong>Member code:</strong> <%= @client.client_id %></p>
 </div>
 
-<%= link_to "Edit", edit_client_path(@client), class: "btn btn-outline" %>
 <%= link_to "Back", clients_path, class: "btn btn-outline ml-2" %>
+<% if current_user.admin? %>
+  <%= link_to "Edit", edit_client_path(@client), class: "btn btn-outline ml-2" %>
+<% end %>

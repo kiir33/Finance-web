@@ -2,16 +2,16 @@
 
 one:
   group_account: one
-  amount: 500.00
-  transaction_type: "income"
+  amount: 100.00
+  transaction_type: "deposit"
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: nil
+  deleted_at:
 
 two:
   group_account: two
-  amount: 250.00
-  transaction_type: "expense"
+  amount: 75.00
+  transaction_type: "withdrawal"
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at: nil
+  deleted_at:

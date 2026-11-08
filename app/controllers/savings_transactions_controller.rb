@@ -3,11 +3,11 @@ class SavingsTransactionsController < ApplicationController
   before_action :set_accounts, only: %i[new create]
 
   def index
-    @transactions = SavingsTransaction.order(created_at: :desc)
+    @transactions = visible_transactions.order(created_at: :desc)
   end
 
   def show
-    @transaction = SavingsTransaction.find(params[:id])
+    @transaction = visible_transactions.find(params[:id])
   end
 
   def new
@@ -27,6 +27,17 @@ class SavingsTransactionsController < ApplicationController
 
   def set_accounts
     @accounts = SavingsAccount.where(deleted_at: nil).order(:id)
+  end
+
+  # Admins can see every transaction; members only transactions on their own accounts.
+  def visible_transactions
+    scope = SavingsTransaction.where(deleted_at: nil)
+    return scope if current_user.admin?
+
+    account_ids = SavingsAccount
+      .where(client_id: current_user.clients.where(deleted_at: nil).ids)
+      .ids
+    scope.where(savings_account_id: account_ids)
   end
 
   def transaction_params
