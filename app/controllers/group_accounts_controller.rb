@@ -23,7 +23,7 @@ class GroupAccountsController < ApplicationController
   private
 
   def set_account
-    @account = GroupAccount.first || GroupAccount.create!(cash_balance: 0, bank_balance: 0)
+    @account = GroupAccount.where(deleted_at: nil).first || GroupAccount.create!(cash_balance: 0, bank_balance: 0)
   end
 
   def account_params

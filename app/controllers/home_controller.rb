@@ -1,10 +1,11 @@
 class HomeController < ApplicationController
   def index
     if current_user.admin?
-      @treasury = GroupAccount.first
+      @treasury = GroupAccount.where(deleted_at: nil).first
       @client_count = Client.where(deleted_at: nil).count
       @active_loan_count = Loan.where(deleted_at: nil).count
       @pending_savings_txns = SavingsTransaction
+        .where(deleted_at: nil)
         .includes(savings_account: :client)
         .order(created_at: :desc)
         .limit(5)
