@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cash_balance: 9.99
+  bank_balance: 9.99
+  public_id: 
+  lock_version: 1
+  deleted_at: 2026-11-08 06:29:14
+
+two:
+  cash_balance: 9.99
+  bank_balance: 9.99
+  public_id: 
+  lock_version: 1
+  deleted_at: 2026-11-08 06:29:14

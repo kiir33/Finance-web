@@ -1,0 +1,18 @@
+<h1>FinanceApp Dashboard</h1>
+
+<% if user_signed_in? %>
+  <p>Welcome, <%= current_user.email %> (<%= current_user.role %>)</p>
+
+  <h2>Quick Links</h2>
+  <ul>
+    <li><%= link_to "Clients", api_v1_clients_path %></li>
+    <li><%= link_to "Loans", api_v1_loans_path %></li>
+    <li><%= link_to "Savings Accounts", api_v1_savings_accounts_path %></li>
+    <li><%= link_to "System Configs", api_v1_system_configs_path %></li>
+    <li><%= link_to "Audit Logs", api_v1_audit_logs_path %></li>
+  </ul>
+
+  <p><%= button_to "Logout", destroy_session_path, method: :delete %></p>
+<% else %>
+  <p><%= link_to "Log in", new_session_path %></p>
+<% end %>

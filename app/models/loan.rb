@@ -1,0 +1,15 @@
+class Loan < ApplicationRecord
+  belongs_to :client
+
+  validates :client, presence: true
+
+  before_create :generate_public_id
+
+  has_many :loan_repayments, dependent: :destroy
+
+  private
+
+  def generate_public_id
+    self.public_id ||= SecureRandom.uuid
+  end
+end
