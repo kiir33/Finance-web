@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  config_key: MyString
-  config_value: MyString
-  config_type: MyString
-  description: MyString
+savings_interest_rate:
+  config_key: "savings_interest_rate"
+  config_value: "0.05"
+  config_type: "savings"
+  description: "Annual interest rate for savings accounts (5%)"
   lock_version: 1
 
-two:
-  config_key: MyString
-  config_value: MyString
-  config_type: MyString
-  description: MyString
+loan_max_amount:
+  config_key: "loan_max_amount"
+  config_value: "10000"
+  config_type: "loan"
+  description: "Maximum loan amount per client"
   lock_version: 1

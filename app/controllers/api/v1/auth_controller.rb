@@ -8,9 +8,10 @@ module Api
 
         if user
           start_session(user)
+          token = issue_jwt(user)
           render json: {
             data: {
-              token: issue_jwt(user),
+              token: token,
               user: { id: user.id, email: user.email, role: user.role }
             }
           }, status: :ok
@@ -19,9 +20,15 @@ module Api
             error: { code: "invalid_credentials", message: "Invalid email or password" }
           }, status: :unauthorized
         end
+      rescue RuntimeError => e
+        render json: {
+          error: { code: "max_admin_sessions", message: e.message }
+        }, status: :forbidden
       end
 
       def logout
+        token = bearer_token
+        revoke_jwt(token) if token
         end_session
         render json: { data: { message: "Logged out" } }, status: :ok
       end
