@@ -1,4 +1,6 @@
 class GroupTransaction < ApplicationRecord
+  include Syncable
+
   belongs_to :group_account
 
   validates :group_account, presence: true
