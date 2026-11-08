@@ -1,0 +1,12 @@
+<%= content_for :title, "Savings Account" %>
+
+<h1 class="text-2xl font-bold mb-6">Savings Account Details</h1>
+
+<div class="card mb-6">
+  <p><strong>Client:</strong> <%= link_to @account.client.client_id, client_path(@account.client) %></p>
+</div>
+
+<%= link_to "Back", savings_accounts_path, class: "btn btn-outline ml-2" %>
+<% if current_user.admin? %>
+  <%= link_to "Edit", edit_savings_account_path(@account), class: "btn btn-outline ml-2" %>
+<% end %>

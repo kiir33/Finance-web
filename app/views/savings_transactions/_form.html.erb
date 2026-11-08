@@ -1,0 +1,23 @@
+<%= form_with model: @transaction, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :savings_account_id, "Savings Account", class: "form-label" %>
+    <%= form.collection_select :savings_account_id, @accounts, :id, :id, {}, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :amount, "Amount", class: "form-label" %>
+    <%= form.text_field :amount, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :transaction_type, "Type", class: "form-label" %>
+    <%= form.select :transaction_type, [["Deposit", "deposit"], ["Withdrawal", "withdrawal"]], {}, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit "Record", class: "btn btn-primary" %>
+    <%= link_to "Cancel", savings_transactions_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>

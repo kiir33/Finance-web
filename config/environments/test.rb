@@ -1,3 +1,7 @@
+# Tests must not depend on a real JWT signing secret being available in the
+# environment (CI has no secrets configured). This only affects the test env.
+ENV["API_TOKEN_SECRET"] ||= "test-api-token-secret"
+
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
 # your test database is "scratch space" for the test suite and is wiped

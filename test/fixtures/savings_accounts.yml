@@ -4,10 +4,10 @@ one:
   client: one
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at:
+  deleted_at: nil
 
 two:
   client: two
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
-  deleted_at:
+  deleted_at: nil

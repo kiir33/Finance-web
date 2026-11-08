@@ -1,0 +1,30 @@
+<%= content_for :title, "Savings Accounts" %>
+
+<h1 class="text-2xl font-bold mb-6">Savings Accounts</h1>
+
+<% if current_user.admin? %>
+  <%= link_to "New Savings Account", new_savings_account_path, class: "btn btn-primary mb-4" %>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Client</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @accounts.each do |account| %>
+      <tr>
+        <td><%= link_to account.client.client_id, client_path(account.client) %></td>
+        <td class="text-right">
+          <%= link_to "Show", savings_account_path(account), class: "btn btn-outline mb-1" %>
+          <% if current_user.admin? %>
+            <%= link_to "Edit", edit_savings_account_path(account), class: "btn btn-outline mb-1" %>
+            <%= button_to "Archive", savings_account_path(account), method: :delete, class: "btn btn-danger mb-1" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
