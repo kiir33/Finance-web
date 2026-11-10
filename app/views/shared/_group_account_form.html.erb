@@ -1,0 +1,18 @@
+<%= form_with model: group_account, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :cash_balance, "Cash Balance", class: "form-label" %>
+    <%= form.text_field :cash_balance, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :bank_balance, "Bank Balance", class: "form-label" %>
+    <%= form.text_field :bank_balance, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit "Update", class: "btn btn-primary" %>
+    <%= link_to "Cancel", group_account_path(group_account), class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>
