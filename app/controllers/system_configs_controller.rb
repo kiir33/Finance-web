@@ -41,7 +41,7 @@ class SystemConfigsController < ApplicationController
   private
 
   def set_config
-    @config = SystemConfig.find_by!(config_key: params[:id])
+    @config = SystemConfig.find_by!(config_key: params[:config_key])
   end
 
   def config_params
