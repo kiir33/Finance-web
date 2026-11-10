@@ -14,13 +14,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @transactions.each do |txn| %>
-      <tr>
-        <td><%= txn.group_account_id %></td>
-        <td><%= txn.transaction_type %></td>
-        <td><%= number_to_currency(txn.amount) %></td>
-        <td><%= txn.created_at %></td>
-      </tr>
-    <% end %>
+    <%= render partial: "shared/group_transaction", collection: @transactions, as: :transaction %>
   </tbody>
 </table>
