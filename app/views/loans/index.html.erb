@@ -14,17 +14,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @loans.each do |loan| %>
-      <tr>
-        <td><%= link_to loan.client.client_id, client_path(loan.client) %></td>
-        <td class="text-right">
-          <%= link_to "Show", loan_path(loan), class: "btn btn-outline mb-1" %>
-          <% if current_user.admin? %>
-            <%= link_to "Edit", edit_loan_path(loan), class: "btn btn-outline mb-1" %>
-            <%= button_to "Archive", loan_path(loan), method: :delete, class: "btn btn-danger mb-1" %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
+    <%= render partial: "shared/loan", collection: @loans, as: :loan %>
   </tbody>
 </table>
