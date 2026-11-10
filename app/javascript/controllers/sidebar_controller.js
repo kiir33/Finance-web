@@ -46,8 +46,8 @@ export default class extends Controller {
   }
 
   setupEventListeners() {
-    // Handle window resize for responsive behavior
-    this.resizeHandler = () => this.handleResize();
+    // Handle window resize for responsive behavior (debounced)
+    this.resizeHandler = debounce(() => this.handleResize(), 150);
     window.addEventListener("resize", this.resizeHandler);
 
     // Close mobile drawer on escape key
@@ -69,14 +69,14 @@ export default class extends Controller {
     const nowMobile = this.isMobile;
 
     if (wasMobile && !nowMobile) {
-      // Transitioning from mobile to desktop
+      // Transitioning from mobile to desktop - preserve collapsed state
       this.mobileOpenValue = false;
       this.sidebarTarget.classList.remove("open");
       document.body.classList.remove("sidebar-open");
       this.applyState();
     } else if (!wasMobile && nowMobile) {
-      // Transitioning from desktop to mobile
-      this.collapsedValue = false;
+      // Transitioning from desktop to mobile - don't force collapsed to false
+      // Just ensure the open state is correct for mobile
       this.sidebarTarget.classList.remove("collapsed");
       this.applyState();
     }
@@ -105,4 +105,13 @@ export default class extends Controller {
       this.close();
     }
   }
+}
+
+// Simple debounce utility
+function debounce(fn, delay) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
 }

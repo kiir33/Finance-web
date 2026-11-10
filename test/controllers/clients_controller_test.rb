@@ -17,7 +17,7 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
 
   test "create adds a client and redirects" do
     assert_difference -> { Client.count }, 1 do
-      post clients_url, params: { client: { client_id: "701", name: "Web Client", phone_number: "555-0001", address: "1 Web St" } }
+      post clients_url, params: { client: { client_id: "701", name: "Web Client", phone_number: "555-0001", address: "1 Web St", user_id: users(:member).id } }
     end
     assert_redirected_to client_path(Client.last)
   end

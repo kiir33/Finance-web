@@ -28,7 +28,7 @@ module Api
       test "admin can create a client" do
         assert_difference -> { Client.count }, 1 do
           @session.post api_v1_clients_url,
-                        params: { client_id: "801", name: "API Client", phone_number: "555-0001", address: "1 Main St" },
+                        params: { client_id: "801", name: "API Client", phone_number: "555-0001", address: "1 Main St", user_id: users(:member).id },
                         headers: @headers, as: :json
         end
         @session.assert_response :created

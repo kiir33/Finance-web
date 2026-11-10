@@ -15,7 +15,7 @@ class ClientTest < ActiveSupport::TestCase
   end
 
   test "generates a public_id before create" do
-    client = Client.create!(client_id: "501", name: "Public ID Client")
+    client = Client.create!(client_id: "501", name: "Public ID Client", user: users(:member))
     assert client.public_id.present?
   end
 
