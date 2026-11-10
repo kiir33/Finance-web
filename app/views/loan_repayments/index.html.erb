@@ -15,12 +15,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @repayments.each do |repayment| %>
-      <tr>
-        <td><%= link_to repayment.loan.client.client_id, client_path(repayment.loan.client) %></td>
-        <td><%= number_to_currency(repayment.amount) %></td>
-        <td><%= repayment.created_at %></td>
-      </tr>
-    <% end %>
+    <%= render partial: "shared/loan_repayment", collection: @repayments, as: :repayment %>
   </tbody>
 </table>
