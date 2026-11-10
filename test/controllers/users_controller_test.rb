@@ -52,4 +52,26 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get users_url
     assert_redirected_to root_path
   end
+
+  test "concurrent edit with stale lock_version shows conflict" do
+    user = users(:member)
+    original_lock_version = user.lock_version
+    # Simulate another session updating the record first
+    user.increment!(:lock_version)
+
+    patch user_url(user), params: { user: { email: "changed@example.com", lock_version: original_lock_version } }
+    assert_response :conflict
+  end
+
+  test "force_update overwrites concurrent changes" do
+    user = users(:member)
+    original_lock_version = user.lock_version
+    # Simulate another session updating the record first
+    user.increment!(:lock_version)
+
+    patch user_url(user), params: { user: { email: "overwritten@example.com", lock_version: original_lock_version, force_update: "true" } }
+    assert_redirected_to user_path(user)
+    user.reload
+    assert_equal "overwritten@example.com", user.email
+  end
 end

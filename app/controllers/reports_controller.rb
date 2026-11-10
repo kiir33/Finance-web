@@ -4,7 +4,6 @@ class ReportsController < ApplicationController
   def index
     @treasury = GroupAccount.where(deleted_at: nil).first
     @client_count = Client.where(deleted_at: nil).count
-    @active_client_count = Client.where(deleted_at: nil).where.not(id: nil).count
     @active_loan_count = Loan.where(deleted_at: nil).count
     @total_loan_amount = Loan.where(deleted_at: nil).sum(:amount)
     @savings_account_count = SavingsAccount.where(deleted_at: nil).count
