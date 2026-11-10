@@ -1,0 +1,40 @@
+<%= form_with model: user, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :email, "Email", class: "form-label" %>
+    <%= form.text_field :email, class: "form-input" %>
+  </div>
+
+  <% if user.new_record? %>
+    <div class="mb-4">
+      <%= form.label :password, "Password", class: "form-label" %>
+      <%= form.password_field :password, class: "form-input" %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :password_confirmation, "Password Confirmation", class: "form-label" %>
+      <%= form.password_field :password_confirmation, class: "form-input" %>
+    </div>
+  <% else %>
+    <div class="mb-4">
+      <%= form.label :password, "New Password (leave blank to keep current)", class: "form-label" %>
+      <%= form.password_field :password, class: "form-input" %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :password_confirmation, "Confirm New Password", class: "form-label" %>
+      <%= form.password_field :password_confirmation, class: "form-input" %>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <%= form.label :role, "Role", class: "form-label" %>
+    <%= form.select :role, [["Member", "member"], ["Admin", "admin"]], {}, class: "form-input" %>
+  </div>
+
+  <%= hidden_field_tag :"user[lock_version]", user.lock_version %>
+
+  <div>
+    <%= form.submit user.persisted? ? "Update User" : "Create User", class: "btn btn-primary" %>
+    <%= link_to "Cancel", users_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>

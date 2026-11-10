@@ -1,0 +1,33 @@
+<%= content_for :title, "User Management" %>
+
+<h1 class="text-2xl font-bold mb-6">User Management</h1>
+
+<%= link_to "New User", new_user_path, class: "btn btn-primary mb-4" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Public ID</th>
+      <th class="text-right">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.email %></td>
+        <td><%= user.role.humanize %></td>
+        <td><%= user.public_id %></td>
+        <td class="text-right">
+          <%= link_to "View", user_path(user), class: "btn btn-outline mb-1" %>
+          <%= link_to "Edit", edit_user_path(user), class: "btn btn-outline mb-1" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if @users.none? %>
+  <p class="text-sm text-gray-500 mt-4">No users found.</p>
+<% end %>
