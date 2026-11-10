@@ -1,0 +1,87 @@
+<%= content_for :title, "Reports" %>
+
+<h1 class="text-2xl font-bold mb-6">Reports</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="card">
+    <h3 class="text-sm font-medium text-gray-500 mb-2">Group Treasury</h3>
+    <p class="text-2xl font-bold">
+      <%= number_to_currency((@treasury&.cash_balance || 0) + (@treasury&.bank_balance || 0)) %>
+    </p>
+    <p class="text-sm text-gray-500">
+      Cash <%= number_to_currency(@treasury&.cash_balance || 0) %> ·
+      Bank <%= number_to_currency(@treasury&.bank_balance || 0) %>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 class="text-sm font-medium text-gray-500 mb-2">Total Clients</h3>
+    <p class="text-2xl font-bold"><%= @client_count %></p>
+  </div>
+
+  <div class="card">
+    <h3 class="text-sm font-medium text-gray-500 mb-2">Active Loans</h3>
+    <p class="text-2xl font-bold"><%= @active_loan_count %></p>
+    <p class="text-sm text-gray-500">
+      Total: <%= number_to_currency(@total_loan_amount || 0) %>
+    </p>
+  </div>
+</div>
+
+<div class="card mb-6">
+  <h3 class="text-sm font-medium text-gray-500 mb-4">Savings Summary</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="text-right">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Savings Accounts</td>
+        <td class="text-right"><%= @savings_account_count %></td>
+      </tr>
+      <tr>
+        <td>Total Balance</td>
+        <td class="text-right"><%= number_to_currency(@total_savings_balance || 0) %></td>
+      </tr>
+      <tr>
+        <td>Total Deposits</td>
+        <td class="text-right"><%= number_to_currency(@total_savings_deposits || 0) %></td>
+      </tr>
+      <tr>
+        <td>Total Withdrawals</td>
+        <td class="text-right"><%= number_to_currency(@total_savings_withdrawals || 0) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card mb-6">
+  <h3 class="text-sm font-medium text-gray-500 mb-4">Recent Audit Logs</h3>
+  <% if @recent_audit_logs.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Action</th>
+          <th>Record</th>
+          <th class="text-right">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_audit_logs.each do |log| %>
+          <tr>
+            <td><%= log.user&.email %></td>
+            <td><%= log.action %></td>
+            <td><%= log.record_type %></td>
+            <td class="text-right"><%= log.created_at %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-sm text-gray-500">No audit logs.</p>
+  <% end %>
+</div>

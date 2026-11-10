@@ -52,6 +52,8 @@ Rails.application.routes.draw do
   resources :group_transactions, only: %i[index show new create]
   resources :audit_logs, only: [ :index ]
   resources :system_configs, param: :config_key
+  resources :users, except: [ :destroy ]
+  resources :reports, only: [ :index ]
 
   # Root
   root "home#index"
