@@ -41,10 +41,10 @@ class SystemConfigsController < ApplicationController
   private
 
   def set_config
-    @config = SystemConfig.find_by!(config_key: params[:id])
+    @config = SystemConfig.find_by!(config_key: params[:config_key])
   end
 
   def config_params
-    params.require(:system_config).permit(:config_key, :config_value, :config_type, :description)
+    params.require(:system_config).permit(:config_key, :config_value, :config_type, :description, :lock_version, :force_update)
   end
 end

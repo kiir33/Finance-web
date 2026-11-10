@@ -10,6 +10,10 @@ class SystemConfig < ApplicationRecord
   scope :savings_configs, -> { where(config_type: "savings") }
   scope :loan_configs, -> { where(config_type: "loan") }
 
+  def to_param
+    config_key
+  end
+
   private
 
   def generate_public_id
