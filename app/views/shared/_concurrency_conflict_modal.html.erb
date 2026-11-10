@@ -2,6 +2,14 @@
 <%# Expects @concurrency_conflict hash with :record, :submitted_params, :record_type %>
 
 <% if @concurrency_conflict.present? %>
+  <% record = @concurrency_conflict[:record] %>
+  <% record_type = @concurrency_conflict[:record_type] %>
+  <% submitted = @concurrency_conflict[:submitted_params] %>
+  <% param_key = record.class.model_name.param_key %>
+  <% edit_path = send("edit_#{param_key}_path", record) %>
+  <% update_path = send("#{param_key}_path", record) %>
+  <% original_lock_version = submitted[:lock_version] %>
+
   <div id="concurrency-conflict-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="conflict-modal-title">
     <div class="modal-container">
       <div class="modal-header">
@@ -24,8 +32,8 @@
                 <tr><th>Field</th><th>Your Value</th></tr>
               </thead>
               <tbody>
-                <% @concurrency_conflict[:submitted_params].each do |key, value| %>
-                  <% next if key.in?(%w[lock_version _method authenticity_token commit]) %>
+                <% submitted.each do |key, value| %>
+                  <% next if key.in?(%w[lock_version _method authenticity_token commit force_update]) %>
                   <tr>
                     <td class="font-medium"><%= key.humanize %></td>
                     <td><%= value.presence || "<em class='text-gray-400'>(empty)</em>".html_safe %></td>
@@ -42,7 +50,7 @@
                 <tr><th>Field</th><th>Server Value</th></tr>
               </thead>
               <tbody>
-                <% @concurrency_conflict[:record].attributes.each do |key, value| %>
+                <% record.attributes.each do |key, value| %>
                   <% next if key.in?(%w[id created_at updated_at lock_version deleted_at public_id]) %>
                   <tr>
                     <td class="font-medium"><%= key.humanize %></td>
@@ -57,17 +65,17 @@
         <p class="text-sm text-gray-600 mb-4">Choose how to proceed:</p>
 
         <div class="flex gap-3">
-          <%# Discard button - reloads the page with server data %>
-          <%= button_to "Discard My Changes", request.path, method: :get, class: "btn btn-outline", form: { data: { turbo: false } } %>
+          <%# Discard button - reloads the edit page with server data %>
+          <%= button_to "Discard My Changes", edit_path, method: :get, class: "btn btn-outline", form: { data: { turbo: false } } %>
 
           <%# Save button - submits with force flag to overwrite %>
-          <%= form_with url: request.path, method: :patch, local: true, class: "inline" do |form| %>
-            <% @concurrency_conflict[:submitted_params].each do |key, value| %>
-              <% next if key.in?(%w[lock_version _method authenticity_token commit]) %>
+          <%= form_with url: update_path, method: :patch, local: true, class: "inline" do |form| %>
+            <% submitted.each do |key, value| %>
+              <% next if key.in?(%w[lock_version _method authenticity_token commit force_update]) %>
               <%= form.hidden_field key, value: value %>
             <% end %>
             <%= form.hidden_field :force_update, value: "true" %>
-            <%= form.hidden_field :lock_version, value: @concurrency_conflict[:record].lock_version %>
+            <%= form.hidden_field :lock_version, value: original_lock_version %>
             <%= form.submit "Save Anyway (Overwrite)", class: "btn btn-danger" %>
           <% end %>
         </div>

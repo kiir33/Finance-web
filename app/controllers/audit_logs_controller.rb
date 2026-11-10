@@ -1,5 +1,4 @@
 class AuditLogsController < ApplicationController
-  include ConcurrencyHandling
   before_action :require_admin!
 
   def index

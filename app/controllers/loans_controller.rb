@@ -30,7 +30,15 @@ class LoansController < ApplicationController
   end
 
   def update
-    if @loan.update(loan_params)
+    if @force_update_retry
+      permitted = loan_params.except(:lock_version, :force_update)
+      if @loan.update_columns(permitted)
+        redirect_to @loan, notice: "Loan was updated (overwrote concurrent changes)."
+      else
+        @clients = Client.where(deleted_at: nil).order(:client_id)
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @loan.update(loan_params)
       redirect_to @loan, notice: "Loan was updated."
     else
       @clients = Client.where(deleted_at: nil).order(:client_id)

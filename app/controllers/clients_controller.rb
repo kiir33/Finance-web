@@ -27,7 +27,15 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update(client_params)
+    if @force_update_retry
+      # Bypass optimistic locking for concurrent edit "Save Anyway"
+      permitted = client_params.except(:lock_version, :force_update)
+      if @client.update_columns(permitted)
+        redirect_to @client, notice: "Client was updated (overwrote concurrent changes)."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @client.update(client_params)
       redirect_to @client, notice: "Client was updated."
     else
       render :edit, status: :unprocessable_entity

@@ -1,5 +1,4 @@
 class SavingsTransactionsController < ApplicationController
-  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create]
   before_action :set_accounts, only: %i[new create]
 
@@ -42,6 +41,6 @@ class SavingsTransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:savings_transaction).permit(:savings_account_id, :amount, :transaction_type, :lock_version, :force_update)
+    params.require(:savings_transaction).permit(:savings_account_id, :amount, :transaction_type)
   end
 end

@@ -27,7 +27,14 @@ class SystemConfigsController < ApplicationController
   end
 
   def update
-    if @config.update(config_params)
+    if @force_update_retry
+      permitted = config_params.except(:lock_version, :force_update)
+      if @config.update_columns(permitted)
+        redirect_to @config, notice: "System config was updated (overwrote concurrent changes)."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @config.update(config_params)
       redirect_to @config, notice: "System config was updated."
     else
       render :edit, status: :unprocessable_entity

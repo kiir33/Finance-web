@@ -30,7 +30,15 @@ class SavingsAccountsController < ApplicationController
   end
 
   def update
-    if @account.update(account_params)
+    if @force_update_retry
+      permitted = account_params.except(:lock_version, :force_update)
+      if @account.update_columns(permitted)
+        redirect_to @account, notice: "Savings account was updated (overwrote concurrent changes)."
+      else
+        @clients = Client.where(deleted_at: nil).order(:client_id)
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @account.update(account_params)
       redirect_to @account, notice: "Savings account was updated."
     else
       @clients = Client.where(deleted_at: nil).order(:client_id)
