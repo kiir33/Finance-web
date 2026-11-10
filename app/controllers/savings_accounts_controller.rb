@@ -1,4 +1,5 @@
 class SavingsAccountsController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_account, only: %i[show edit update destroy]
 
@@ -29,7 +30,15 @@ class SavingsAccountsController < ApplicationController
   end
 
   def update
-    if @account.update(account_params)
+    if @force_update_retry
+      permitted = account_params.except(:lock_version, :force_update)
+      if @account.update_columns(permitted)
+        redirect_to @account, notice: "Savings account was updated (overwrote concurrent changes)."
+      else
+        @clients = Client.where(deleted_at: nil).order(:client_id)
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @account.update(account_params)
       redirect_to @account, notice: "Savings account was updated."
     else
       @clients = Client.where(deleted_at: nil).order(:client_id)
@@ -55,6 +64,6 @@ class SavingsAccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:savings_account).permit(:client_id)
+    params.require(:savings_account).permit(:client_id, :lock_version, :force_update)
   end
 end

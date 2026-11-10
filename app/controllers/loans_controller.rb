@@ -1,4 +1,5 @@
 class LoansController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_loan, only: %i[show edit update destroy]
 
@@ -29,7 +30,15 @@ class LoansController < ApplicationController
   end
 
   def update
-    if @loan.update(loan_params)
+    if @force_update_retry
+      permitted = loan_params.except(:lock_version, :force_update)
+      if @loan.update_columns(permitted)
+        redirect_to @loan, notice: "Loan was updated (overwrote concurrent changes)."
+      else
+        @clients = Client.where(deleted_at: nil).order(:client_id)
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @loan.update(loan_params)
       redirect_to @loan, notice: "Loan was updated."
     else
       @clients = Client.where(deleted_at: nil).order(:client_id)
@@ -55,6 +64,6 @@ class LoansController < ApplicationController
   end
 
   def loan_params
-    params.require(:loan).permit(:client_id)
+    params.require(:loan).permit(:client_id, :lock_version, :force_update)
   end
 end

@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_client, only: %i[show edit update destroy]
 
@@ -26,7 +27,15 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update(client_params)
+    if @force_update_retry
+      # Bypass optimistic locking for concurrent edit "Save Anyway"
+      permitted = client_params.except(:lock_version, :force_update)
+      if @client.update_columns(permitted)
+        redirect_to @client, notice: "Client was updated (overwrote concurrent changes)."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @client.update(client_params)
       redirect_to @client, notice: "Client was updated."
     else
       render :edit, status: :unprocessable_entity
@@ -51,6 +60,6 @@ class ClientsController < ApplicationController
   end
 
   def client_params
-    params.require(:client).permit(:client_id, :name, :phone_number, :address, :user_id)
+    params.require(:client).permit(:client_id, :name, :phone_number, :address, :user_id, :lock_version, :force_update)
   end
 end

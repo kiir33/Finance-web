@@ -1,5 +1,6 @@
 <%= form_with model: config, local: true do |form| %>
   <%= render "shared/form_errors", object: form.object %>
+  <%= form.hidden_field :lock_version %>
 
   <div class="mb-4">
     <%= form.label :config_key, "Key", class: "form-label" %>
