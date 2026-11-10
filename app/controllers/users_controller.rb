@@ -17,6 +17,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.role = params[:user][:role] if params[:user]&.key?(:role)
     if @user.save
       redirect_to @user, notice: "User was created."
     else
@@ -32,8 +33,9 @@ class UsersController < ApplicationController
     # Check force_update BEFORE calling @user.update so the StaleObjectError
     # is never raised and the overwrite actually persists.
     if params[:force_update] == "true" || params.dig(:user, :force_update) == "true"
-      permitted = user_params.except(:lock_version, :force_update, :password, :password_confirmation)
+      permitted = user_params.except(:lock_version, :force_update, :password, :password_confirmation).to_h
       if @user.update_columns(permitted)
+        @user.update(role: params[:user][:role]) if params[:user]&.key?(:role)
         redirect_to @user, notice: "User was updated (overwrote concurrent changes)."
       else
         render :edit, status: :unprocessable_entity
@@ -42,6 +44,7 @@ class UsersController < ApplicationController
     end
 
     if @user.update(user_params)
+      @user.update(role: params[:user][:role]) if params[:user]&.key?(:role)
       redirect_to @user, notice: "User was updated."
     else
       render :edit, status: :unprocessable_entity
@@ -55,6 +58,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :role, :lock_version, :force_update)
+    params.require(:user).permit(:email, :password, :password_confirmation, :lock_version, :force_update)
   end
 end

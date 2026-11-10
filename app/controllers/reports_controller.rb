@@ -5,9 +5,7 @@ class ReportsController < ApplicationController
     @treasury = GroupAccount.where(deleted_at: nil).first
     @client_count = Client.where(deleted_at: nil).count
     @active_loan_count = Loan.where(deleted_at: nil).count
-    @total_loan_amount = Loan.where(deleted_at: nil).sum(:amount)
     @savings_account_count = SavingsAccount.where(deleted_at: nil).count
-    @total_savings_balance = SavingsAccount.where(deleted_at: nil).sum(:balance)
     @total_savings_deposits = SavingsTransaction
       .where(deleted_at: nil, transaction_type: "deposit")
       .sum(:amount)

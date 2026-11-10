@@ -22,9 +22,6 @@
   <div class="card">
     <h3 class="text-sm font-medium text-gray-500 mb-2">Active Loans</h3>
     <p class="text-2xl font-bold"><%= @active_loan_count %></p>
-    <p class="text-sm text-gray-500">
-      Total: <%= number_to_currency(@total_loan_amount || 0) %>
-    </p>
   </div>
 </div>
 
@@ -41,10 +38,6 @@
       <tr>
         <td>Savings Accounts</td>
         <td class="text-right"><%= @savings_account_count %></td>
-      </tr>
-      <tr>
-        <td>Total Balance</td>
-        <td class="text-right"><%= number_to_currency(@total_savings_balance || 0) %></td>
       </tr>
       <tr>
         <td>Total Deposits</td>
@@ -75,7 +68,7 @@
           <tr>
             <td><%= log.user&.email %></td>
             <td><%= log.action %></td>
-            <td><%= log.record_type %></td>
+            <td><%= log.action %></td>
             <td class="text-right"><%= log.created_at %></td>
           </tr>
         <% end %>
