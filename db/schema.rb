@@ -30,7 +30,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_203213) do
     t.string "name"
     t.string "phone_number"
     t.string "address"
-    t.bigint "user_id", null: true
+    t.bigint "user_id"
     t.uuid "public_id"
     t.integer "lock_version"
     t.datetime "deleted_at"
