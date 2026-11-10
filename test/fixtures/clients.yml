@@ -15,6 +15,7 @@ two:
   name: "Jane Smith"
   phone_number: "555-0102"
   address: "456 Oak Ave"
+  user: member_two
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
   deleted_at:

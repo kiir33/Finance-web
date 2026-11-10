@@ -1,0 +1,18 @@
+<%= form_with model: repayment, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :loan_id, "Loan", class: "form-label" %>
+    <%= form.collection_select :loan_id, @loans, :id, :id, {}, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :amount, "Amount", class: "form-label" %>
+    <%= form.text_field :amount, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit "Record", class: "btn btn-primary" %>
+    <%= link_to "Cancel", loan_repayments_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>
