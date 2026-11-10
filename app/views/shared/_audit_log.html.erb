@@ -1,0 +1,6 @@
+<%= content_tag :tr, class: "audit-log-row" do %>
+  <td><%= audit_log.action %></td>
+  <td><%= audit_log.user&.email %></td>
+  <td><%= audit_log.created_at %></td>
+  <td><%= audit_log.details %></td>
+<% end %>

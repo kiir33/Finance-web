@@ -12,13 +12,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @audit_logs.each do |log| %>
-      <tr>
-        <td><%= log.action %></td>
-        <td><%= log.user&.email %></td>
-        <td><%= log.created_at %></td>
-        <td><%= log.details %></td>
-      </tr>
-    <% end %>
+    <%= render partial: "shared/audit_log", collection: @audit_logs, as: :audit_log %>
   </tbody>
 </table>
