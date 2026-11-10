@@ -1,4 +1,5 @@
 class SavingsAccountsController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_account, only: %i[show edit update destroy]
 
@@ -55,6 +56,6 @@ class SavingsAccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:savings_account).permit(:client_id)
+    params.require(:savings_account).permit(:client_id, :lock_version, :force_update)
   end
 end

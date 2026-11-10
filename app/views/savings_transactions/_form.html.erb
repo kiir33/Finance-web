@@ -1,5 +1,6 @@
 <%= form_with model: @transaction, local: true do |form| %>
   <%= render "shared/form_errors", object: form.object %>
+  <%= form.hidden_field :lock_version %>
 
   <div class="mb-4">
     <%= form.label :savings_account_id, "Savings Account", class: "form-label" %>

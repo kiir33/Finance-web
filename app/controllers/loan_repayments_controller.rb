@@ -1,4 +1,5 @@
 class LoanRepaymentsController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create]
 
   def index
@@ -37,6 +38,6 @@ class LoanRepaymentsController < ApplicationController
   end
 
   def repayment_params
-    params.require(:loan_repayment).permit(:loan_id, :amount)
+    params.require(:loan_repayment).permit(:loan_id, :amount, :lock_version, :force_update)
   end
 end

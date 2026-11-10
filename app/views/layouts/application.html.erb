@@ -24,12 +24,14 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
   <body class="antialiased">
     <%= render "shared/nav" %>
 
     <main class="container py-6">
       <%= render "shared/flash" %>
+      <%= render "shared/concurrency_conflict_modal" %>
       <%= yield %>
     </main>
   </body>

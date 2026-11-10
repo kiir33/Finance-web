@@ -1,4 +1,5 @@
 class SystemConfigsController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_config, only: %i[show edit update destroy]
 
@@ -45,6 +46,6 @@ class SystemConfigsController < ApplicationController
   end
 
   def config_params
-    params.require(:system_config).permit(:config_key, :config_value, :config_type, :description)
+    params.require(:system_config).permit(:config_key, :config_value, :config_type, :description, :lock_version, :force_update)
   end
 end

@@ -1,4 +1,5 @@
 class LoansController < ApplicationController
+  include ConcurrencyHandling
   before_action :require_admin!, only: %i[new create edit update destroy]
   before_action :set_loan, only: %i[show edit update destroy]
 
@@ -55,6 +56,6 @@ class LoansController < ApplicationController
   end
 
   def loan_params
-    params.require(:loan).permit(:client_id)
+    params.require(:loan).permit(:client_id, :lock_version, :force_update)
   end
 end

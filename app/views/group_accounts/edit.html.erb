@@ -5,6 +5,7 @@
 <div class="card">
   <%= form_with model: @account, local: true do |form| %>
     <%= render "shared/form_errors", object: form.object %>
+    <%= form.hidden_field :lock_version %>
 
     <div class="mb-4">
       <%= form.label :cash_balance, "Cash Balance", class: "form-label" %>
