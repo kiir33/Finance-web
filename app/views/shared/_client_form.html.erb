@@ -1,0 +1,33 @@
+<%= form_with model: client, local: true do |form| %>
+  <%= render "shared/form_errors", object: form.object %>
+
+  <div class="mb-4">
+    <%= form.label :client_id, "Member Code", class: "form-label" %>
+    <%= form.text_field :client_id, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :name, "Name", class: "form-label" %>
+    <%= form.text_field :name, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :phone_number, "Phone", class: "form-label" %>
+    <%= form.text_field :phone_number, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :address, "Address", class: "form-label" %>
+    <%= form.text_area :address, class: "form-input" %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :user_id, "Linked User", class: "form-label" %>
+    <%= form.collection_select :user_id, User.order(:email), :id, :email, {}, class: "form-input" %>
+  </div>
+
+  <div>
+    <%= form.submit client.persisted? ? "Update" : "Create", class: "btn btn-primary" %>
+    <%= link_to "Cancel", clients_path, class: "btn btn-outline ml-2" %>
+  </div>
+<% end %>
