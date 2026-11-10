@@ -13,3 +13,10 @@ member:
   role: 0
   public_id: <%= SecureRandom.uuid %>
   lock_version: 1
+
+member_two:
+  email: "member2@example.com"
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  role: 0
+  public_id: <%= SecureRandom.uuid %>
+  lock_version: 1
