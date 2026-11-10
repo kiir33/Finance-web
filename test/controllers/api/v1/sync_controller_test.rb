@@ -18,7 +18,7 @@ module Api
       end
 
       test "download returns delta since a timestamp" do
-        client = Client.create!(client_id: "901", name: "Sync Test")
+        client = Client.create!(client_id: "901", name: "Sync Test", user: users(:member))
 
         get api_v1_sync_url, params: { since: "1970-01-01T00:00:00Z" }, headers: @headers, as: :json
         assert_response :ok
@@ -31,7 +31,7 @@ module Api
         post api_v1_sync_url,
              params: { device_id: "device-1",
                        changes: [ { record_type: "client", op: "create", local_temp_id: temp_id,
-                                   payload: { client_id: "903", name: "Upload Client" } } ] },
+                                   payload: { client_id: "903", name: "Upload Client", user_id: users(:member).id } } ] },
              headers: @headers, as: :json
         assert_response :ok
         mappings = response.parsed_body["data"]["mappings"]
@@ -40,7 +40,7 @@ module Api
       end
 
       test "upload detects lock_version conflict and returns 409" do
-        client = Client.create!(client_id: "904", name: "Conflict Client")
+        client = Client.create!(client_id: "904", name: "Conflict Client", user: users(:member))
         original_version = client.lock_version
         client.increment!(:lock_version)
 
@@ -54,7 +54,7 @@ module Api
       end
 
       test "soft delete produces a tombstone in download" do
-        client = Client.create!(client_id: "905", name: "Tombstone Client")
+        client = Client.create!(client_id: "905", name: "Tombstone Client", user: users(:member))
 
         get api_v1_sync_url, params: { since: "1970-01-01T00:00:00Z" }, headers: @headers, as: :json
         create_change = response.parsed_body["data"]["changes"].find { |c| c["public_id"] == client.public_id }
@@ -67,7 +67,7 @@ module Api
       end
 
       test "download excludes changes older than since" do
-        client = Client.create!(client_id: "902", name: "Old Client")
+        client = Client.create!(client_id: "902", name: "Old Client", user: users(:member))
         future = 1.day.from_now.iso8601
         get api_v1_sync_url, params: { since: future }, headers: @headers, as: :json
         assert_response :ok
@@ -90,8 +90,8 @@ module Api
       end
 
       test "batch upload rolls back earlier changes on conflict" do
-        client_a = Client.create!(client_id: "906", name: "Client A")
-        client_b = Client.create!(client_id: "907", name: "Client B")
+        client_a = Client.create!(client_id: "906", name: "Client A", user: users(:member))
+        client_b = Client.create!(client_id: "907", name: "Client B", user: users(:member))
         original_b_version = client_b.lock_version
         client_b.increment!(:lock_version)
 
