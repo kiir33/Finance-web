@@ -14,17 +14,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @accounts.each do |account| %>
-      <tr>
-        <td><%= link_to account.client.client_id, client_path(account.client) %></td>
-        <td class="text-right">
-          <%= link_to "Show", savings_account_path(account), class: "btn btn-outline mb-1" %>
-          <% if current_user.admin? %>
-            <%= link_to "Edit", edit_savings_account_path(account), class: "btn btn-outline mb-1" %>
-            <%= button_to "Archive", savings_account_path(account), method: :delete, class: "btn btn-danger mb-1" %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
+    <%= render partial: "shared/savings_account", collection: @accounts, as: :account %>
   </tbody>
 </table>
