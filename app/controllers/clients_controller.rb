@@ -29,7 +29,7 @@ class ClientsController < ApplicationController
   def update
     if @force_update_retry
       # Bypass optimistic locking for concurrent edit "Save Anyway"
-      permitted = client_params.except(:lock_version, :force_update)
+      permitted = client_params.except(:lock_version, :force_update).to_h
       if @client.update_columns(permitted)
         redirect_to @client, notice: "Client was updated (overwrote concurrent changes)."
       else

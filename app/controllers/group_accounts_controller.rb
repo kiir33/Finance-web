@@ -15,7 +15,7 @@ class GroupAccountsController < ApplicationController
 
   def update
     if @force_update_retry
-      permitted = account_params.except(:lock_version, :force_update)
+      permitted = account_params.except(:lock_version, :force_update).to_h
       if @account.update_columns(permitted)
         redirect_to @account, notice: "Treasury balances were updated (overwrote concurrent changes)."
       else

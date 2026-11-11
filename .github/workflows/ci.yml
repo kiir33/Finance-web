@@ -65,6 +65,9 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+      - name: Lint theme token usage (no hardcoded colours in views)
+        run: bin/lint-css-tokens
+
   test:
     runs-on: ubuntu-latest
 
