@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
   def index
     @treasury = GroupAccount.where(deleted_at: nil).first
-    @client_count = Client.where(deleted_at: nil).count
+    @member_count = Member.where(deleted_at: nil).count
     @active_loan_count = Loan.where(deleted_at: nil).count
     # NOTE: loans currently has no monetary column (the principal/amount field
     # has not been migrated yet), so there is no total-loan-amount aggregate.

@@ -1,5 +1,5 @@
 <%= content_tag :tr, class: "loan-repayment-row" do %>
-  <td><%= link_to repayment.loan.client.client_id, client_path(repayment.loan.client) %></td>
+  <td><%= link_to repayment.loan.member.member_id, member_path(repayment.loan.member) %></td>
   <td><%= number_to_currency(repayment.amount) %></td>
   <td><%= repayment.created_at %></td>
 <% end %>

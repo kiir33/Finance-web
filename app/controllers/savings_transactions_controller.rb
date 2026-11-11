@@ -35,7 +35,7 @@ class SavingsTransactionsController < ApplicationController
     return scope if current_user.admin?
 
     account_ids = SavingsAccount
-      .where(client_id: current_user.clients.where(deleted_at: nil).ids)
+      .where(member_id: current_user.members.where(deleted_at: nil).ids)
       .ids
     scope.where(savings_account_id: account_ids)
   end

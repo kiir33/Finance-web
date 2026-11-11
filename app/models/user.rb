@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   before_create :generate_public_id
 
-  has_many :clients, dependent: :nullify
+  has_many :members, dependent: :nullify
   has_many :audit_logs, dependent: :nullify
 
   scope :admins, -> { where(role: :admin) }

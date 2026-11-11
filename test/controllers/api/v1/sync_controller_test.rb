@@ -18,35 +18,35 @@ module Api
       end
 
       test "download returns delta since a timestamp" do
-        client = Client.create!(client_id: "901", name: "Sync Test", user: users(:member))
+        member = Member.create!(member_id: "901", name: "Sync Member", user: users(:member))
 
         get api_v1_sync_url, params: { since: "1970-01-01T00:00:00Z" }, headers: @headers, as: :json
         assert_response :ok
         changes = response.parsed_body["data"]["changes"]
-        assert changes.any? { |c| c["record_type"] == "client" && c["public_id"] == client.public_id }
+        assert changes.any? { |c| c["record_type"] == "member" && c["public_id"] == member.public_id }
       end
 
       test "upload applies a create change and returns public_id mapping" do
-        temp_id = "temp-client-903"
+        temp_id = "temp-member-903"
         post api_v1_sync_url,
              params: { device_id: "device-1",
-                       changes: [ { record_type: "client", op: "create", local_temp_id: temp_id,
-                                   payload: { client_id: "903", name: "Upload Client", user_id: users(:member).id } } ] },
+                       changes: [ { record_type: "member", op: "create", local_temp_id: temp_id,
+                                   payload: { member_id: "903", name: "Upload Member", user_id: users(:member).id } } ] },
              headers: @headers, as: :json
         assert_response :ok
         mappings = response.parsed_body["data"]["mappings"]
         assert mappings.any? { |m| m["local_temp_id"] == temp_id && m["public_id"].present? }
-        assert Client.find_by(client_id: "903")
+        assert Member.find_by(member_id: "903")
       end
 
       test "upload detects lock_version conflict and returns 409" do
-        client = Client.create!(client_id: "904", name: "Conflict Client", user: users(:member))
-        original_version = client.lock_version
-        client.increment!(:lock_version)
+        member = Member.create!(member_id: "904", name: "Conflict Member", user: users(:member))
+        original_version = member.lock_version
+        member.increment!(:lock_version)
 
         post api_v1_sync_url,
              params: { device_id: "device-1",
-                       changes: [ { record_type: "client", op: "update", public_id: client.public_id,
+                       changes: [ { record_type: "member", op: "update", public_id: member.public_id,
                                    payload: { name: "Changed", lock_version: original_version } } ] },
              headers: @headers, as: :json
         assert_response :conflict
@@ -54,25 +54,25 @@ module Api
       end
 
       test "soft delete produces a tombstone in download" do
-        client = Client.create!(client_id: "905", name: "Tombstone Client", user: users(:member))
+        member = Member.create!(member_id: "905", name: "Tombstone Member", user: users(:member))
 
         get api_v1_sync_url, params: { since: "1970-01-01T00:00:00Z" }, headers: @headers, as: :json
-        create_change = response.parsed_body["data"]["changes"].find { |c| c["public_id"] == client.public_id }
+        create_change = response.parsed_body["data"]["changes"].find { |c| c["public_id"] == member.public_id }
         assert_not create_change["deleted"]
 
-        client.update!(deleted_at: Time.current)
+        member.update!(deleted_at: Time.current)
         get api_v1_sync_url, params: { since: "1970-01-01T00:00:00Z" }, headers: @headers, as: :json
-        delete_change = response.parsed_body["data"]["changes"].find { |c| c["public_id"] == client.public_id && c["deleted"] }
-        assert delete_change, "expected a tombstone for the soft-deleted client"
+        delete_change = response.parsed_body["data"]["changes"].find { |c| c["public_id"] == member.public_id && c["deleted"] }
+        assert delete_change, "expected a tombstone for the soft-deleted member"
       end
 
       test "download excludes changes older than since" do
-        client = Client.create!(client_id: "902", name: "Old Client", user: users(:member))
+        member = Member.create!(member_id: "902", name: "Old Member", user: users(:member))
         future = 1.day.from_now.iso8601
         get api_v1_sync_url, params: { since: future }, headers: @headers, as: :json
         assert_response :ok
         changes = response.parsed_body["data"]["changes"]
-        assert changes.none? { |c| c["public_id"] == client.public_id }
+        assert changes.none? { |c| c["public_id"] == member.public_id }
       end
 
       test "member system_config upload is forbidden with 403" do
@@ -90,24 +90,24 @@ module Api
       end
 
       test "batch upload rolls back earlier changes on conflict" do
-        client_a = Client.create!(client_id: "906", name: "Client A", user: users(:member))
-        client_b = Client.create!(client_id: "907", name: "Client B", user: users(:member))
-        original_b_version = client_b.lock_version
-        client_b.increment!(:lock_version)
+        member_a = Member.create!(member_id: "906", name: "Member A", user: users(:member))
+        member_b = Member.create!(member_id: "907", name: "Member B", user: users(:member))
+        original_b_version = member_b.lock_version
+        member_b.increment!(:lock_version)
 
         post api_v1_sync_url,
              params: { device_id: "device-1",
                        changes: [
-                         { record_type: "client", op: "update", public_id: client_a.public_id,
-                           payload: { name: "Changed A", lock_version: client_a.lock_version } },
-                         { record_type: "client", op: "update", public_id: client_b.public_id,
+                         { record_type: "member", op: "update", public_id: member_a.public_id,
+                           payload: { name: "Changed A", lock_version: member_a.lock_version } },
+                         { record_type: "member", op: "update", public_id: member_b.public_id,
                            payload: { name: "Changed B", lock_version: original_b_version } }
                        ] },
              headers: @headers, as: :json
         assert_response :conflict
 
-        # Client A must be unchanged because the whole batch rolled back
-        assert_equal "Client A", Client.find(client_a.id).name
+        # Member A must be unchanged because the whole batch rolled back
+        assert_equal "Member A", Member.find(member_a.id).name
       end
     end
   end

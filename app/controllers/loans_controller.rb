@@ -12,7 +12,7 @@ class LoansController < ApplicationController
 
   def new
     @loan = Loan.new
-    @clients = Client.where(deleted_at: nil).order(:client_id)
+    @members = Member.where(deleted_at: nil).order(:member_id)
   end
 
   def create
@@ -20,13 +20,13 @@ class LoansController < ApplicationController
     if @loan.save
       redirect_to @loan, notice: "Loan was created."
     else
-      @clients = Client.where(deleted_at: nil).order(:client_id)
+      @members = Member.where(deleted_at: nil).order(:member_id)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @clients = Client.where(deleted_at: nil).order(:client_id)
+    @members = Member.where(deleted_at: nil).order(:member_id)
   end
 
   def update
@@ -35,13 +35,13 @@ class LoansController < ApplicationController
       if @loan.update_columns(permitted)
         redirect_to @loan, notice: "Loan was updated (overwrote concurrent changes)."
       else
-        @clients = Client.where(deleted_at: nil).order(:client_id)
+        @members = Member.where(deleted_at: nil).order(:member_id)
         render :edit, status: :unprocessable_entity
       end
     elsif @loan.update(loan_params)
       redirect_to @loan, notice: "Loan was updated."
     else
-      @clients = Client.where(deleted_at: nil).order(:client_id)
+      @members = Member.where(deleted_at: nil).order(:member_id)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -57,13 +57,13 @@ class LoansController < ApplicationController
     @loan = visible_loans.find(params[:id])
   end
 
-  # Admins can see every loan; members are limited to loans belonging to their clients.
+  # Admins can see every loan; members are limited to loans belonging to their members.
   def visible_loans
     scope = Loan.where(deleted_at: nil)
-    current_user.admin? ? scope : scope.where(client_id: current_user.clients.where(deleted_at: nil).ids)
+    current_user.admin? ? scope : scope.where(member_id: current_user.members.where(deleted_at: nil).ids)
   end
 
   def loan_params
-    params.require(:loan).permit(:client_id, :lock_version, :force_update)
+    params.require(:loan).permit(:member_id, :lock_version, :force_update)
   end
 end

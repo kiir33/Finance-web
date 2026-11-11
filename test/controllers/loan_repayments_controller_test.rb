@@ -44,7 +44,7 @@ class LoanRepaymentsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, loan_repayments(:two).id.to_s
   end
 
-  test "member cannot view a repayment on another client's loan" do
+  test "member cannot view a repayment on another member's loan" do
     delete destroy_session_url
     post session_url, params: { email: "member@example.com", password: "password123" }
 

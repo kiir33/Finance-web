@@ -31,14 +31,14 @@ module Api
       end
 
       test "protected API endpoints require authentication" do
-        get api_v1_clients_url, as: :json
+        get api_v1_members_url, as: :json
         assert_response :unauthorized
       end
 
-      test "authenticated admin can access clients index" do
+      test "authenticated admin can access members index" do
         post api_v1_auth_login_url, params: { email: "admin@example.com", password: "password123" }, as: :json
         token = response.parsed_body["data"]["token"]
-        get api_v1_clients_url, headers: { "Authorization" => "Bearer #{token}" }, as: :json
+        get api_v1_members_url, headers: { "Authorization" => "Bearer #{token}" }, as: :json
         assert_response :ok
       end
 

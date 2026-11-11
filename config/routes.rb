@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       delete "system_configs/:key", to: "system_configs#destroy"
 
       # Resources
-      resources :clients, only: %i[index show create update destroy]
+      resources :members, only: %i[index show create update destroy]
       resources :savings_accounts, only: %i[index show create update destroy]
       resources :savings_transactions, only: %i[index show create]
       resources :loans, only: %i[index show create update destroy]
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   end
 
   # Web UI resources (session-authenticated, HTML). Separate from /api/v1/*.
-  resources :clients
+  resources :members
   resources :loans
   resources :savings_accounts
   resources :savings_transactions, only: %i[index show new create]

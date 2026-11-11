@@ -25,8 +25,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
-  create_table "clients", force: :cascade do |t|
-    t.string "client_id"
+  create_table "members", force: :cascade do |t|
+    t.string "member_id"
     t.string "name"
     t.string "phone_number"
     t.string "address"
@@ -36,9 +36,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_clients_on_client_id", unique: true
-    t.index ["public_id"], name: "index_clients_on_public_id", unique: true
-    t.index ["user_id"], name: "index_clients_on_user_id"
+    t.index ["member_id"], name: "index_members_on_member_id", unique: true
+    t.index ["public_id"], name: "index_members_on_public_id", unique: true
+    t.index ["user_id"], name: "index_members_on_user_id"
   end
 
   create_table "group_accounts", force: :cascade do |t|
@@ -78,24 +78,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
   end
 
   create_table "loans", force: :cascade do |t|
-    t.bigint "client_id", null: false
+    t.bigint "member_id", null: false
     t.uuid "public_id"
     t.integer "lock_version"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_loans_on_client_id"
+    t.index ["member_id"], name: "index_loans_on_member_id"
     t.index ["public_id"], name: "index_loans_on_public_id", unique: true
   end
 
   create_table "savings_accounts", force: :cascade do |t|
-    t.bigint "client_id", null: false
+    t.bigint "member_id", null: false
     t.uuid "public_id"
     t.integer "lock_version"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_savings_accounts_on_client_id"
+    t.index ["member_id"], name: "index_savings_accounts_on_member_id"
     t.index ["public_id"], name: "index_savings_accounts_on_public_id", unique: true
   end
 
@@ -185,7 +185,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
   end
 
   add_foreign_key "audit_logs", "users"
-  add_foreign_key "clients", "users"
+  add_foreign_key "members", "users"
   add_foreign_key "group_transactions", "group_accounts"
   add_foreign_key "loan_repayments", "loans"
   add_foreign_key "savings_transactions", "savings_accounts"

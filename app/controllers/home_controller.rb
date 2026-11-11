@@ -2,11 +2,11 @@ class HomeController < ApplicationController
   def index
     if current_user.admin?
       @treasury = GroupAccount.where(deleted_at: nil).first
-      @client_count = Client.where(deleted_at: nil).count
+      @member_count = Member.where(deleted_at: nil).count
       @active_loan_count = Loan.where(deleted_at: nil).count
       @pending_savings_txns = SavingsTransaction
         .where(deleted_at: nil)
-        .includes(savings_account: :client)
+        .includes(savings_account: :member)
         .order(created_at: :desc)
         .limit(5)
     else
@@ -17,14 +17,14 @@ class HomeController < ApplicationController
   private
 
   def load_member_dashboard
-    @my_client = current_user.clients.where(deleted_at: nil).first
+    @my_member = current_user.members.where(deleted_at: nil).first
 
-    if @my_client
-      @my_savings_accounts = @my_client.savings_accounts.where(deleted_at: nil).order(:id)
-      @my_active_loans = @my_client.loans.where(deleted_at: nil).order(created_at: :desc)
+    if @my_member
+      @my_savings_accounts = @my_member.savings_accounts.where(deleted_at: nil).order(:id)
+      @my_active_loans = @my_member.loans.where(deleted_at: nil).order(created_at: :desc)
       @my_repayments = LoanRepayment
         .joins(:loan)
-        .where(deleted_at: nil, loans: { client_id: @my_client.id, deleted_at: nil })
+        .where(deleted_at: nil, loans: { member_id: @my_member.id, deleted_at: nil })
         .order(created_at: :desc)
         .limit(5)
     else

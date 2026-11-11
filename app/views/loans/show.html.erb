@@ -3,7 +3,7 @@
 <h1 class="text-2xl font-bold mb-6">Loan Details</h1>
 
 <div class="card mb-6">
-  <p><strong>Client:</strong> <%= link_to @loan.client.client_id, client_path(@loan.client) %></p>
+  <p><strong>Member:</strong> <%= link_to @loan.member.member_id, member_path(@loan.member) %></p>
 </div>
 
 <%= link_to "Back", loans_path, class: "btn btn-outline ml-2" %>

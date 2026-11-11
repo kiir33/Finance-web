@@ -1,5 +1,5 @@
 <%= content_tag :tr, class: "savings-account-row" do %>
-  <td><%= link_to account.client.client_id, client_path(account.client) %></td>
+  <td><%= link_to account.member.member_id, member_path(account.member) %></td>
   <td class="text-right">
     <%= link_to "Show", savings_account_path(account), class: "btn btn-outline mb-1" %>
     <% if current_user.admin? %>

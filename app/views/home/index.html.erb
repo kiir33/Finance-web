@@ -16,9 +16,9 @@
     </div>
 
     <div class="card">
-      <h3 class="text-sm font-medium text-gray-500 mb-2">Clients</h3>
-      <p class="text-2xl font-bold"><%= @client_count %></p>
-      <%= link_to "Manage clients", clients_path, class: "btn btn-outline text-xs mt-2" %>
+      <h3 class="text-sm font-medium text-gray-500 mb-2">Members</h3>
+      <p class="text-2xl font-bold"><%= @member_count %></p>
+      <%= link_to "Manage members", members_path, class: "btn btn-outline text-xs mt-2" %>
     </div>
 
     <div class="card">
@@ -42,7 +42,7 @@
       <tbody>
         <% @pending_savings_txns.each do |txn| %>
           <tr>
-            <td><%= link_to txn.savings_account.client.client_id, client_path(txn.savings_account.client) %></td>
+            <td><%= link_to txn.savings_account.member.member_id, member_path(txn.savings_account.member) %></td>
             <td><%= txn.transaction_type %></td>
             <td><%= number_to_currency(txn.amount) %></td>
             <td><%= txn.created_at %></td>
@@ -55,7 +55,7 @@
   <div class="card">
     <h3 class="text-sm font-medium text-gray-500 mb-4">Quick Links</h3>
     <div class="flex flex-col gap-2">
-      <%= link_to "Clients", clients_path, class: "btn btn-outline w-full" %>
+      <%= link_to "Members", members_path, class: "btn btn-outline w-full" %>
       <%= link_to "Loans", loans_path, class: "btn btn-outline w-full" %>
       <%= link_to "Savings Accounts", savings_accounts_path, class: "btn btn-outline w-full" %>
       <%= link_to "System Configs", system_configs_path, class: "btn btn-outline w-full" %>
@@ -69,12 +69,12 @@
 <% else %>
   <h1 class="text-2xl font-bold mb-6">Member Dashboard</h1>
 
-  <% if @my_client %>
+  <% if @my_member %>
     <div class="card mb-6">
       <h3 class="text-sm font-medium text-gray-500 mb-4">Your Profile</h3>
-      <p><strong>Member code:</strong> <%= @my_client.client_id %></p>
-      <p><strong>Name:</strong> <%= @my_client.name %></p>
-      <p><strong>Phone:</strong> <%= @my_client.phone_number %></p>
+      <p><strong>Member code:</strong> <%= @my_member.member_id %></p>
+      <p><strong>Name:</strong> <%= @my_member.name %></p>
+      <p><strong>Phone:</strong> <%= @my_member.phone_number %></p>
     </div>
 
     <div class="card mb-6">
@@ -131,7 +131,7 @@
           <tbody>
             <% @my_repayments.each do |repayment| %>
               <tr>
-                <td><%= link_to repayment.loan.client.client_id, client_path(repayment.loan.client) %></td>
+                <td><%= link_to repayment.loan.member.member_id, member_path(repayment.loan.member) %></td>
                 <td class="text-right"><%= number_to_currency(repayment.amount) %></td>
                 <td><%= repayment.created_at %></td>
               </tr>
@@ -148,7 +148,7 @@
     </div>
   <% else %>
     <div class="alert flash-alert">
-      No client profile is linked to your account. Please contact an administrator.
+      No member profile is linked to your account. Please contact an administrator.
     </div>
   <% end %>
 <% end %>

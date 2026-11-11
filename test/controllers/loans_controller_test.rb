@@ -16,9 +16,9 @@ class LoansControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create adds a loan and redirects" do
-    client = clients(:one)
+    member = members(:one)
     assert_difference -> { Loan.count }, 1 do
-      post loans_url, params: { loan: { client_id: client.id } }
+      post loans_url, params: { loan: { member_id: member.id } }
     end
     assert_redirected_to loan_path(Loan.last)
   end
@@ -29,7 +29,7 @@ class LoansControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_url
   end
 
-  test "member only sees loans linked to their own clients" do
+  test "member only sees loans linked to their own members" do
     delete destroy_session_url
     post session_url, params: { email: "member@example.com", password: "password123" }
 
@@ -39,7 +39,7 @@ class LoansControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, loans(:two).id.to_s
   end
 
-  test "member cannot view a loan linked to another client" do
+  test "member cannot view a loan linked to another member" do
     delete destroy_session_url
     post session_url, params: { email: "member@example.com", password: "password123" }
 
@@ -53,7 +53,7 @@ class LoansControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update modifies loan and redirects" do
-    patch loan_url(loans(:one)), params: { loan: { client_id: clients(:two).id } }
+    patch loan_url(loans(:one)), params: { loan: { member_id: members(:two).id } }
     assert_redirected_to loan_path(loans(:one))
   end
 
