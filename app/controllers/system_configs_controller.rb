@@ -28,7 +28,7 @@ class SystemConfigsController < ApplicationController
 
   def update
     if @force_update_retry
-      permitted = config_params.except(:lock_version, :force_update)
+      permitted = config_params.except(:lock_version, :force_update).to_h
       if @config.update_columns(permitted)
         redirect_to @config, notice: "System config was updated (overwrote concurrent changes)."
       else

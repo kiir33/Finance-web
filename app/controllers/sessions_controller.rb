@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
-  layout nil
+  layout "auth"
 
   def new
     render :new

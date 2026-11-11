@@ -31,7 +31,7 @@ class LoansController < ApplicationController
 
   def update
     if @force_update_retry
-      permitted = loan_params.except(:lock_version, :force_update)
+      permitted = loan_params.except(:lock_version, :force_update).to_h
       if @loan.update_columns(permitted)
         redirect_to @loan, notice: "Loan was updated (overwrote concurrent changes)."
       else

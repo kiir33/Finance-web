@@ -1,7 +1,7 @@
 class PasswordsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
   before_action :require_authentication, only: %i[edit update]
-  layout nil
+  layout "auth"
 
   def edit
     render :edit
