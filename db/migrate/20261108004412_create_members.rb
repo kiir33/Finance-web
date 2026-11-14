@@ -5,6 +5,7 @@ class CreateMembers < ActiveRecord::Migration[8.1]
       t.string :name
       t.string :phone_number
       t.string :address
+      t.bigint :user_id, null: false
       t.uuid :public_id
       t.integer :lock_version
       t.datetime :deleted_at

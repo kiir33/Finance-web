@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,22 +23,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
     t.datetime "updated_at", null: false
     t.index ["public_id"], name: "index_audit_logs_on_public_id", unique: true
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
-  end
-
-  create_table "members", force: :cascade do |t|
-    t.string "member_id"
-    t.string "name"
-    t.string "phone_number"
-    t.string "address"
-    t.bigint "user_id", null: false
-    t.uuid "public_id"
-    t.integer "lock_version"
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["member_id"], name: "index_members_on_member_id", unique: true
-    t.index ["public_id"], name: "index_members_on_public_id", unique: true
-    t.index ["user_id"], name: "index_members_on_user_id"
   end
 
   create_table "group_accounts", force: :cascade do |t|
@@ -86,6 +70,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
     t.datetime "updated_at", null: false
     t.index ["member_id"], name: "index_loans_on_member_id"
     t.index ["public_id"], name: "index_loans_on_public_id", unique: true
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.string "member_id"
+    t.string "name"
+    t.string "phone_number"
+    t.string "address"
+    t.bigint "user_id", null: false
+    t.uuid "public_id"
+    t.integer "lock_version"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_members_on_member_id", unique: true
+    t.index ["public_id"], name: "index_members_on_public_id", unique: true
+    t.index ["user_id"], name: "index_members_on_user_id"
   end
 
   create_table "savings_accounts", force: :cascade do |t|
@@ -185,9 +185,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_043333) do
   end
 
   add_foreign_key "audit_logs", "users"
-  add_foreign_key "members", "users"
   add_foreign_key "group_transactions", "group_accounts"
   add_foreign_key "loan_repayments", "loans"
+  add_foreign_key "loans", "members"
+  add_foreign_key "members", "users"
+  add_foreign_key "savings_accounts", "members"
   add_foreign_key "savings_transactions", "savings_accounts"
   add_foreign_key "token_blocklists", "users"
   add_foreign_key "user_sessions", "users"
