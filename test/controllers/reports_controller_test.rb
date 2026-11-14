@@ -15,9 +15,9 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h3", text: "Group Treasury"
   end
 
-  test "shows client count" do
+  test "shows member count" do
     get reports_url
-    assert_select "h3", text: "Total Clients"
+    assert_select "h3", text: "Total Members"
   end
 
   test "shows savings summary" do

@@ -1,0 +1,15 @@
+<%= content_for :title, "Member - #{@member.member_id}" %>
+
+<h1 class="text-2xl font-bold mb-6">Member: <%= @member.member_id %></h1>
+
+<div class="card mb-6">
+  <p><strong>Name:</strong> <%= @member.name %></p>
+  <p><strong>Phone:</strong> <%= @member.phone_number %></p>
+  <p><strong>Address:</strong> <%= @member.address %></p>
+  <p><strong>Member code:</strong> <%= @member.member_id %></p>
+</div>
+
+<%= link_to "Back", members_path, class: "btn btn-outline ml-2" %>
+<% if current_user.admin? %>
+  <%= link_to "Edit", edit_member_path(@member), class: "btn btn-outline ml-2" %>
+<% end %>

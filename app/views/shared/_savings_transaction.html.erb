@@ -1,5 +1,5 @@
 <%= content_tag :tr, class: "savings-transaction-row" do %>
-  <td><%= link_to transaction.savings_account.client.client_id, client_path(transaction.savings_account.client) %></td>
+  <td><%= link_to transaction.savings_account.member.member_id, member_path(transaction.savings_account.member) %></td>
   <td><%= transaction.transaction_type %></td>
   <td><%= number_to_currency(transaction.amount) %></td>
   <td><%= transaction.created_at %></td>

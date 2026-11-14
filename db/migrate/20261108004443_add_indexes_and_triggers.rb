@@ -4,16 +4,16 @@ class AddIndexesAndTriggers < ActiveRecord::Migration[8.1]
     add_index :users, :email, unique: true, if_not_exists: true
     add_index :users, :public_id, unique: true, if_not_exists: true
 
-    # --- Clients ---
-    add_index :clients, :client_id, unique: true, if_not_exists: true
-    add_index :clients, :public_id, unique: true, if_not_exists: true
+    # --- Members ---
+    add_index :members, :member_id, unique: true, if_not_exists: true
+    add_index :members, :public_id, unique: true, if_not_exists: true
 
     # --- SavingsAccounts ---
-    add_index :savings_accounts, :client_id, if_not_exists: true
+    add_index :savings_accounts, :member_id, if_not_exists: true
     add_index :savings_accounts, :public_id, unique: true, if_not_exists: true
 
     # --- Loans ---
-    add_index :loans, :client_id, if_not_exists: true
+    add_index :loans, :member_id, if_not_exists: true
     add_index :loans, :public_id, unique: true, if_not_exists: true
 
     # --- SavingsTransactions ---

@@ -33,7 +33,7 @@ class LoanRepaymentsController < ApplicationController
     scope = scope.where(loan_id: params[:loan_id]) if params[:loan_id].present?
     return scope if current_user.admin?
 
-    scope.joins(:loan).where(loans: { client_id: current_user.clients.where(deleted_at: nil).ids })
+    scope.joins(:loan).where(loans: { member_id: current_user.members.where(deleted_at: nil).ids })
   end
 
   def repayment_params

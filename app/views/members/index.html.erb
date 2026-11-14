@@ -1,0 +1,22 @@
+<%= content_for :title, "Members" %>
+
+<h1 class="text-2xl font-bold mb-6">Members</h1>
+
+<% if current_user.admin? %>
+  <%= link_to "New Member", new_member_path, class: "btn btn-primary mb-4" %>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Member ID</th>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th class="text-right">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "shared/member", collection: @members, as: :member %>
+  </tbody>
+</table>

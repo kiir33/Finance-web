@@ -16,9 +16,9 @@ class SavingsAccountsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create adds a savings account and redirects" do
-    client = clients(:one)
+    member = members(:one)
     assert_difference -> { SavingsAccount.count }, 1 do
-      post savings_accounts_url, params: { savings_account: { client_id: client.id } }
+      post savings_accounts_url, params: { savings_account: { member_id: member.id } }
     end
     assert_redirected_to savings_account_path(SavingsAccount.last)
   end
@@ -29,7 +29,7 @@ class SavingsAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_url
   end
 
-  test "member only sees accounts linked to their own clients" do
+  test "member only sees accounts linked to their own members" do
     delete destroy_session_url
     post session_url, params: { email: "member@example.com", password: "password123" }
 
@@ -39,7 +39,7 @@ class SavingsAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, savings_accounts(:two).id.to_s
   end
 
-  test "member cannot view an account linked to another client" do
+  test "member cannot view an account linked to another member" do
     delete destroy_session_url
     post session_url, params: { email: "member@example.com", password: "password123" }
 
@@ -53,7 +53,7 @@ class SavingsAccountsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update modifies account and redirects" do
-    patch savings_account_url(savings_accounts(:one)), params: { savings_account: { client_id: clients(:two).id } }
+    patch savings_account_url(savings_accounts(:one)), params: { savings_account: { member_id: members(:two).id } }
     assert_redirected_to savings_account_path(savings_accounts(:one))
   end
 

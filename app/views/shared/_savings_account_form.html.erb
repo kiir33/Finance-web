@@ -2,8 +2,8 @@
   <%= render "shared/form_errors", object: form.object %>
 
   <div class="mb-4">
-    <%= form.label :client_id, "Client", class: "form-label" %>
-    <%= form.collection_select :client_id, @clients, :id, :client_id, {}, class: "form-input" %>
+    <%= form.label :member_id, "Member", class: "form-label" %>
+    <%= form.collection_select :member_id, @members, :id, :member_id, {}, class: "form-input" %>
   </div>
 
   <div>

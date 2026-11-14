@@ -24,7 +24,7 @@ Deploy the Rails backend to AWS or Azure as a containerized app with a managed P
 ### 2.2 PostgreSQL
 
 - Managed service (RDS / Azure Database for PostgreSQL).
-- Same schema as local dev (`users`, `clients`, `loans`, `savings_*`, `group_*`, `system_configs`, `sync_*`, `audit_logs`).
+- Same schema as local dev (`users`, `members`, `loans`, `savings_*`, `group_*`, `system_configs`, `sync_*`, `audit_logs`).
 - Connection via `DATABASE_URL` with SSL required.
 - Daily automated backups; point-in-time recovery.
 

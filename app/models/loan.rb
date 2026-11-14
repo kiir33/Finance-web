@@ -1,9 +1,9 @@
 class Loan < ApplicationRecord
   include Syncable
 
-  belongs_to :client
+  belongs_to :member
 
-  validates :client, presence: true
+  validates :member, presence: true
 
   before_create :generate_public_id
 

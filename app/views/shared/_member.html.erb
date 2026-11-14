@@ -1,0 +1,12 @@
+<%= content_tag :tr, class: "member-row" do %>
+  <td><%= member.member_id %></td>
+  <td><%= link_to member.name, member_path(member) %></td>
+  <td><%= member.phone_number %></td>
+  <td><%= member.address %></td>
+  <td class="text-right">
+    <% if current_user.admin? %>
+      <%= link_to "Edit", edit_member_path(member), class: "btn btn-outline mb-1" %>
+      <%= button_to "Archive", member_path(member), method: :delete, class: "btn btn-danger mb-1" %>
+    <% end %>
+  </td>
+<% end %>

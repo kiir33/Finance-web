@@ -38,7 +38,7 @@ module Api
       private
 
       def savings_account_params
-        params.permit(:client_id, :public_id, :lock_version)
+        params.permit(:member_id, :public_id, :lock_version)
       end
     end
   end

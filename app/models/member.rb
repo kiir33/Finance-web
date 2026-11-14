@@ -1,9 +1,9 @@
-class Client < ApplicationRecord
+class Member < ApplicationRecord
   include Syncable
 
   belongs_to :user, optional: true
 
-  validates :client_id, presence: true, uniqueness: true
+  validates :member_id, presence: true, uniqueness: true
   validates :name, presence: true
 
   before_create :generate_public_id

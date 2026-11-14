@@ -11,5 +11,5 @@ loan_max_amount:
   config_key: "loan_max_amount"
   config_value: "10000"
   config_type: "loan"
-  description: "Maximum loan amount per client"
+  description: "Maximum loan amount per member"
   lock_version: 1

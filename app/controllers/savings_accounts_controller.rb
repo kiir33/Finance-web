@@ -12,7 +12,7 @@ class SavingsAccountsController < ApplicationController
 
   def new
     @account = SavingsAccount.new
-    @clients = Client.where(deleted_at: nil).order(:client_id)
+    @members = Member.where(deleted_at: nil).order(:member_id)
   end
 
   def create
@@ -20,13 +20,13 @@ class SavingsAccountsController < ApplicationController
     if @account.save
       redirect_to @account, notice: "Savings account was created."
     else
-      @clients = Client.where(deleted_at: nil).order(:client_id)
+      @members = Member.where(deleted_at: nil).order(:member_id)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @clients = Client.where(deleted_at: nil).order(:client_id)
+    @members = Member.where(deleted_at: nil).order(:member_id)
   end
 
   def update
@@ -35,13 +35,13 @@ class SavingsAccountsController < ApplicationController
       if @account.update_columns(permitted)
         redirect_to @account, notice: "Savings account was updated (overwrote concurrent changes)."
       else
-        @clients = Client.where(deleted_at: nil).order(:client_id)
+        @members = Member.where(deleted_at: nil).order(:member_id)
         render :edit, status: :unprocessable_entity
       end
     elsif @account.update(account_params)
       redirect_to @account, notice: "Savings account was updated."
     else
-      @clients = Client.where(deleted_at: nil).order(:client_id)
+      @members = Member.where(deleted_at: nil).order(:member_id)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -57,13 +57,13 @@ class SavingsAccountsController < ApplicationController
     @account = visible_accounts.find(params[:id])
   end
 
-  # Admins can see every account; members are limited to accounts belonging to their clients.
+  # Admins can see every account; members are limited to accounts belonging to their members.
   def visible_accounts
     scope = SavingsAccount.where(deleted_at: nil)
-    current_user.admin? ? scope : scope.where(client_id: current_user.clients.where(deleted_at: nil).ids)
+    current_user.admin? ? scope : scope.where(member_id: current_user.members.where(deleted_at: nil).ids)
   end
 
   def account_params
-    params.require(:savings_account).permit(:client_id, :lock_version, :force_update)
+    params.require(:savings_account).permit(:member_id, :lock_version, :force_update)
   end
 end

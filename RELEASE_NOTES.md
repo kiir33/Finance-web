@@ -13,7 +13,7 @@
   sync conflict tests
 - Phase 5: Web admin dashboard foundation — Tailwind CSS, shared layout/nav/
   flash partials, role-based access (require_admin! / require_member!), web
-  CRUD controllers for clients, loans, savings accounts, group accounts, system
+  CRUD controllers for members, loans, savings accounts, group accounts, system
   configs, audit logs, savings/loan/group transactions
 
 ## Release candidate checks (issue #4)

@@ -79,8 +79,8 @@ module Api
         public_id = change[:public_id]
 
         case record_type
-        when "client"
-          process_client_change(op, payload, local_temp_id, public_id)
+        when "member"
+          process_member_change(op, payload, local_temp_id, public_id)
         when "loan"
           process_loan_change(op, payload, local_temp_id, public_id)
         when "savings_account"
@@ -92,33 +92,33 @@ module Api
         end
       end
 
-      def process_client_change(op, payload, local_temp_id, public_id)
+      def process_member_change(op, payload, local_temp_id, public_id)
         case op
         when "create"
-          client = Client.new(payload.permit(:client_id, :name, :phone_number, :address, :user_id))
-          client.public_id = public_id if public_id.present?
-          if client.save
-            { local_temp_id: local_temp_id, public_id: client.public_id }
+          member = Member.new(payload.permit(:member_id, :name, :phone_number, :address, :user_id))
+          member.public_id = public_id if public_id.present?
+          if member.save
+            { local_temp_id: local_temp_id, public_id: member.public_id }
           else
-            { local_temp_id: local_temp_id, error: client.errors.full_messages }
+            { local_temp_id: local_temp_id, error: member.errors.full_messages }
           end
         when "update"
-          client = Client.find_by(public_id: public_id)
-          unless client
+          member = Member.find_by(public_id: public_id)
+          unless member
             return { public_id: public_id, error: "not_found" }
           end
-          if stale?(client, payload[:lock_version])
-            return { public_id: public_id, error: "conflict", current: client_slice(client) }
+          if stale?(member, payload[:lock_version])
+            return { public_id: public_id, error: "conflict", current: member_slice(member) }
           end
-          if client.update(payload.permit(:client_id, :name, :phone_number, :address, :user_id))
-            { public_id: client.public_id }
+          if member.update(payload.permit(:member_id, :name, :phone_number, :address, :user_id))
+            { public_id: member.public_id }
           else
-            { public_id: public_id, error: client.errors.full_messages }
+            { public_id: public_id, error: member.errors.full_messages }
           end
         when "delete"
-          client = Client.find_by(public_id: public_id)
-          if client
-            client.update(deleted_at: Time.current)
+          member = Member.find_by(public_id: public_id)
+          if member
+            member.update(deleted_at: Time.current)
             { public_id: public_id }
           else
             { public_id: public_id, error: "not_found" }
@@ -129,7 +129,7 @@ module Api
       def process_loan_change(op, payload, local_temp_id, public_id)
         case op
         when "create"
-          loan = Loan.new(payload.permit(:client_id, :public_id, :lock_version))
+          loan = Loan.new(payload.permit(:member_id, :public_id, :lock_version))
           if loan.save
             { local_temp_id: local_temp_id, public_id: loan.public_id }
           else
@@ -143,7 +143,7 @@ module Api
           if stale?(loan, payload[:lock_version])
             return { public_id: public_id, error: "conflict", current: loan_slice(loan) }
           end
-          if loan.update(payload.permit(:client_id, :lock_version))
+          if loan.update(payload.permit(:member_id, :lock_version))
             { public_id: loan.public_id }
           else
             { public_id: public_id, error: loan.errors.full_messages }
@@ -162,7 +162,7 @@ module Api
       def process_savings_account_change(op, payload, local_temp_id, public_id)
         case op
         when "create"
-          account = SavingsAccount.new(payload.permit(:client_id, :public_id, :lock_version))
+          account = SavingsAccount.new(payload.permit(:member_id, :public_id, :lock_version))
           if account.save
             { local_temp_id: local_temp_id, public_id: account.public_id }
           else
@@ -176,7 +176,7 @@ module Api
           if stale?(account, payload[:lock_version])
             return { public_id: public_id, error: "conflict", current: account_slice(account) }
           end
-          if account.update(payload.permit(:client_id, :lock_version))
+          if account.update(payload.permit(:member_id, :lock_version))
             { public_id: account.public_id }
           else
             { public_id: public_id, error: account.errors.full_messages }
@@ -227,23 +227,23 @@ module Api
         end
       end
 
-      def stale?(record, client_lock_version)
-        return false if client_lock_version.nil?
-        record.lock_version != client_lock_version.to_i
+      def stale?(record, member_lock_version)
+        return false if member_lock_version.nil?
+        record.lock_version != member_lock_version.to_i
       end
 
-      def client_slice(client)
-        { id: client.public_id, client_id: client.client_id, name: client.name,
-          lock_version: client.lock_version, updated_at: client.updated_at, deleted_at: client.deleted_at }
+      def member_slice(member)
+        { id: member.public_id, member_id: member.member_id, name: member.name,
+          lock_version: member.lock_version, updated_at: member.updated_at, deleted_at: member.deleted_at }
       end
 
       def loan_slice(loan)
-        { id: loan.public_id, client_id: loan.client_id, lock_version: loan.lock_version,
+        { id: loan.public_id, member_id: loan.member_id, lock_version: loan.lock_version,
           updated_at: loan.updated_at, deleted_at: loan.deleted_at }
       end
 
       def account_slice(account)
-        { id: account.public_id, client_id: account.client_id, lock_version: account.lock_version,
+        { id: account.public_id, member_id: account.member_id, lock_version: account.lock_version,
           updated_at: account.updated_at, deleted_at: account.deleted_at }
       end
 
