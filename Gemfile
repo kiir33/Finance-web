@@ -14,7 +14,7 @@ gem "importmap-rails"
 gem "turbo-rails"
 
 # Compiled Tailwind CSS (replaces CDN; tokens driven from app/assets/tailwind/application.css)
-gem "tailwindcss-rails", "~> 2.0"
+gem "tailwindcss-rails", "~> 4.7"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
 
